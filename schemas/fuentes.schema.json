@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fuentes.schema.json",
+  "title": "Fuentes de un dominio",
+  "description": "config/fuentes/<dominio>.yml: fuentes que ingiere el framework. Añadir una fuente no requiere código.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["dominio", "fuentes"],
+  "properties": {
+    "dominio": {"$ref": "#/$defs/nombre"},
+    "fuentes": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"$ref": "#/$defs/nombre"},
+      "additionalProperties": {"$ref": "#/$defs/fuente"}
+    }
+  },
+  "$defs": {
+    "nombre": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "fuente": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["formato", "ruta_landing", "clave_negocio", "contrato"],
+      "properties": {
+        "formato": {"enum": ["csv", "parquet", "json", "delta", "avro", "orc"]},
+        "ruta_landing": {"type": "string", "pattern": "^landing/", "description": "Relativa a lh_bronze/Files"},
+        "opciones_lectura": {"type": "object", "description": "Opciones del lector de Spark (header, delimiter...)"},
+        "tabla_bronze": {"$ref": "#/$defs/nombre"},
+        "tabla_silver": {"$ref": "#/$defs/nombre"},
+        "clave_negocio": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nombre"}},
+        "modo_carga": {"enum": ["append", "overwrite", "merge"], "default": "merge"},
+        "contrato": {"type": "string", "pattern": "^contracts/silver/[a-z0-9_]+\\.yml$"}
+      }
+    }
+  }
+}
