@@ -18,3 +18,17 @@ def test_contexto_desde_la_configuracion_del_repo():
     contrato = ctx.contrato("pedidos")
     assert contrato.clave == ("id_pedido",)
     assert contrato.politica_rechazo == "cuarentena"
+
+
+def test_contexto_carga_modelo_y_ambos_contratos_desde_lector():
+    def lector(ruta):
+        relativa = ruta.removeprefix("config-publicada/")
+        for base in (REPO / "templates/workshop/05_scd2", REPO / "templates/workshop/01_base", REPO):
+            if (base / relativa).is_file():
+                return (base / relativa).read_text(encoding="utf-8")
+        raise FileNotFoundError(ruta)
+
+    ctx = cargar_contexto("dev", "<workspace>", "crm", raiz="config-publicada", lector=lector)
+    assert ctx.modelo("dim_cliente").columnas_scd2 == ("ciudad",)
+    assert ctx.contrato_modelo("dim_cliente").clave == ("id_version",)
+    assert ctx.contrato_modelo("dim_cliente", actual=True).clave == ("id_cliente",)

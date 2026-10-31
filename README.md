@@ -9,6 +9,12 @@ Es la versión "proyecto real" del framework del workshop *75 años de proyectos
 
 ## Las siete piezas
 
+La rama evolutiva incorpora generación greenfield, lectura SQL directa, ventanas incrementales confirmadas,
+cuarentena versionada, revalidación y activación SCD2 sobre una dimensión tipo1.
+El [recorrido de cuatro horas](docs/runbooks/workshop-evolutivo.md) explica los comandos, notebooks y checkpoints
+de [templates/workshop](templates/workshop/README.md). Para validar también almacenamiento y recuperación local:
+`pytest --delta` (Java 17; en Windows requiere además las bibliotecas nativas de Hadoop).
+
 | # | Pieza | Dónde |
 |---|---|---|
 | 1 | Convenciones | `docs/convenciones.md` |
@@ -30,6 +36,7 @@ Es la versión "proyecto real" del framework del workshop *75 años de proyectos
 ├── src/datafwk/                   librería: arranque, config, rutas, estandarizar, calidad, auditoría, carga
 ├── config/entornos/               nombres de workspace y lakehouse por entorno
 ├── config/fuentes/<dominio>.yml   fuentes declaradas: añadir una fuente no requiere código
+├── config/modelos/<modelo>.yml   modelo gold, atributos tipo1/SCD2 y proyección actual
 ├── contracts/{silver,gold}/       contrato por tabla: tipos, nulos, valores, reglas, propietario
 ├── schemas/                       JSON Schema de contratos, fuentes y entornos (editor + linters)
 ├── sql/                           consultas Spark SQL versionadas (operación, gold)

@@ -13,7 +13,7 @@
 
 # # nb_NN_capa_proposito
 # <Qué hace este notebook en una frase. Qué tabla lee y qué tabla escribe.>
-# 
+#
 # Contrato de salida: `contracts/<capa>/<tabla>.yml`
 
 # PARAMETERS CELL ********************

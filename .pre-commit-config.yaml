@@ -89,6 +89,10 @@ repos:
         name: Esquema de entornos
         files: ^config/entornos/.*\.yml$
         args: [--schemafile, schemas/entorno.schema.json]
+      - id: check-jsonschema
+        name: Esquema de modelos
+        files: ^config/modelos/.*\.yml$
+        args: [--schemafile, schemas/modelo.schema.json]
 
   # --- SQL -------------------------------------------------------------------------------------
   - repo: https://github.com/sqlfluff/sqlfluff

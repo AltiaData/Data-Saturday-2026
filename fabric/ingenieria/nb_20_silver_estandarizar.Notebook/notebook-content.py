@@ -14,8 +14,8 @@
 # # nb_20_silver_estandarizar
 # Bronze → silver: snake_case, contrato de datos, deduplicación por clave y carga según `modo_carga`.
 # 
-# Las filas que no cumplen el contrato van a `_cuarentena_<tabla>` con todos sus motivos.
-# Cada ejecución queda en `lh_silver.fwk_ejecuciones` y debe reconciliar: leídas = escritas + rechazadas.
+# Los rechazos quedan en `fwk_cuarentena` con dato bruto, motivos y versión del contrato.
+# Reconciliación: leídas = claves aceptadas + rechazadas + observaciones consolidadas.
 
 # PARAMETERS CELL ********************
 
@@ -23,7 +23,7 @@ entorno = "dev"
 workspace_datos = "proyecto-datos-dev"
 dominio = "ventas"
 fuente = "pedidos"
-batch_id = ""   # vacío = reprocesar todo bronze (el merge lo hace idempotente)
+batch_id = ""   # obligatorio: salida de bronze; para cambiar reglas usa nb_90_ops_revalidar
 
 # METADATA ********************
 
@@ -53,7 +53,7 @@ print(
 
 # CELL ********************
 
-if ejecucion.estado != "ok":
+if ejecucion.estado not in ("ok", "reutilizado"):
     raise RuntimeError(f"La ejecución terminó en estado '{ejecucion.estado}'. Revisa fwk_ejecuciones.")
 
 # METADATA ********************

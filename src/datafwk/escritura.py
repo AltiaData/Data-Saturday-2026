@@ -11,7 +11,9 @@ if TYPE_CHECKING:
     from pyspark.sql import DataFrame, SparkSession
 
 
-def escribir(spark: SparkSession, df: DataFrame, ruta: str, modo: str, clave: tuple[str, ...]) -> None:
+def escribir(
+    spark: SparkSession, df: DataFrame, ruta: str, modo: str, clave: tuple[str, ...], *, batch_id: str | None = None
+) -> None:
     if modo not in MODOS_CARGA:
         raise ConfiguracionInvalida(f"modo de carga '{modo}' no es uno de {MODOS_CARGA}")
 
@@ -19,15 +21,22 @@ def escribir(spark: SparkSession, df: DataFrame, ruta: str, modo: str, clave: tu
 
     if modo == "merge" and DeltaTable.isDeltaTable(spark, ruta):
         condicion = " AND ".join(f"t.{c} = s.{c}" for c in clave)
+        negocio = [c for c in df.columns if not c.startswith("_")]
+        cambios = " OR ".join(f"NOT (t.`{c}` <=> s.`{c}`)" for c in negocio) or "false"
         (
             DeltaTable.forPath(spark, ruta)
             .alias("t")
             .merge(df.alias("s"), condicion)
-            .whenMatchedUpdateAll()
+            .whenMatchedUpdateAll(condition=cambios)
             .whenNotMatchedInsertAll()
             .execute()
         )
         return
 
     modo_spark = "overwrite" if modo in ("overwrite", "merge") else "append"
-    df.write.format("delta").mode(modo_spark).option("mergeSchema", "true").save(ruta)
+    escritor = df.write.format("delta").mode(modo_spark)
+    if modo_spark == "append" and batch_id:
+        escritor = escritor.option("txnAppId", f"{ruta}:{batch_id}").option("txnVersion", 0)
+    if modo_spark == "overwrite":
+        escritor = escritor.option("overwriteSchema", "true")
+    escritor.save(ruta)

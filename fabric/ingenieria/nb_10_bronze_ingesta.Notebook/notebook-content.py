@@ -12,7 +12,7 @@
 # MARKDOWN ********************
 
 # # nb_10_bronze_ingesta
-# Landing → bronze para una fuente declarada en `config/fuentes/<dominio>.yml`.
+# SQL o landing → bronze para una fuente declarada en `config/fuentes/<dominio>.yml`.
 # 
 # Este notebook **no contiene lógica**: toda vive en la librería `datafwk`, instalada en el Environment `env_fwk`.
 # Bronze es append-only: guarda lo que llegó, como llegó, con `_ingested_at`, `_source` y `_batch_id`.

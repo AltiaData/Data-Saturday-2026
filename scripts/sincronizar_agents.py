@@ -27,7 +27,7 @@ CONVENCIONES = [
     "todas las funciones con tipos completos y sin `Any` implícito.",
     "**Notebooks de Fabric:** se revisan con Ruff pero no se formatean. `spark`, `notebookutils` y `display` "
     "existen sin importarlos. `print()` solo en notebooks y `scripts/`; en `src/` se devuelven resultados.",
-    "**Contratos, fuentes y entornos:** cumplen su JSON Schema de `schemas/`. Nombres en snake_case, tipos de "
+    "**Contratos, fuentes, modelos y entornos:** cumplen su JSON Schema de `schemas/`. Nombres en snake_case, tipos de "
     "Spark SQL (`decimal(p,s)` para importes) y `descripcion` en cada columna. Un texto con comas va entre "
     "comillas: sin ellas YAML lo parte en dos claves.",
     "**SQL** (Spark SQL, `.sqlfluff`): palabras clave en MAYÚSCULAS, funciones e identificadores en minúsculas, "

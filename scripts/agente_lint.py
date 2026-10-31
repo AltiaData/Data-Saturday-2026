@@ -30,6 +30,7 @@ ESQUEMAS = {
     "contracts/": "schemas/contrato.schema.json",
     "config/fuentes/": "schemas/fuentes.schema.json",
     "config/entornos/": "schemas/entorno.schema.json",
+    "config/modelos/": "schemas/modelo.schema.json",
 }
 EXCLUIDOS = ("templates/", ".git/", ".herramientas/")
 INSTALAR = "pip install -e '.[dev]'"

@@ -31,15 +31,18 @@ def aplicar_contrato(df: DataFrame, contrato: Contrato) -> tuple[DataFrame, Data
     if faltan:
         raise ContratoIncumplido(f"{contrato.tabla}: faltan columnas del contrato: {faltan}")
 
-    tecnicas = [c for c in df.columns if c.startswith("_")]
+    tecnicas = [c for c in df.columns if c.startswith("_") and c not in contrato.nombres_columnas]
 
     # 1. Tipado. Un valor que no se puede convertir no se pierde en silencio: es un rechazo.
     errores_tipo = [
-        F.when(F.col(c.nombre).isNotNull() & F.col(c.nombre).cast(c.tipo).isNull(), F.lit(f"tipo:{c.nombre}"))
+        F.when(
+            F.col(c.nombre).isNotNull() & F.expr(f"try_cast(`{c.nombre}` AS {c.tipo})").isNull(),
+            F.lit(f"tipo:{c.nombre}"),
+        )
         for c in contrato.columnas
     ]
     tipado = df.select(
-        *[F.col(c.nombre).cast(c.tipo).alias(c.nombre) for c in contrato.columnas],
+        *[F.expr(f"try_cast(`{c.nombre}` AS {c.tipo})").alias(c.nombre) for c in contrato.columnas],
         *[F.col(c) for c in tecnicas],
         F.array(_nulo(), *errores_tipo).alias("_errores_tipo"),
     )

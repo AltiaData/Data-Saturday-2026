@@ -6,4 +6,4 @@ Reglas de diseño:
 - Ninguna ruta se escribe a mano: todas salen de rutas.py a partir de la configuración del entorno.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

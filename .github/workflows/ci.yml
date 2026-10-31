@@ -60,7 +60,7 @@ jobs:
           distribution: temurin
           java-version: "17"
       - run: pip install -e ".[dev]"
-      - run: pytest
+      - run: pytest --delta
 
   secretos:
     name: Secretos (gitleaks, historial completo)

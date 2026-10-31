@@ -43,13 +43,14 @@ class Ejecucion:
     filas_leidas: int = 0
     filas_escritas: int = 0
     filas_rechazadas: int = 0
+    filas_consolidadas: int = 0
     estado: str = "en_curso"
     mensaje: str = ""
 
     @property
     def reconcilia(self) -> bool:
         """Leídas = escritas + rechazadas. Si no cuadra, hay filas que se han perdido por el camino."""
-        return self.filas_leidas == self.filas_escritas + self.filas_rechazadas
+        return self.filas_leidas == self.filas_escritas + self.filas_rechazadas + self.filas_consolidadas
 
     def cerrar(self, estado: str = "ok", mensaje: str = "") -> Ejecucion:
         self.fin = datetime.now(timezone.utc)
@@ -59,6 +60,11 @@ class Ejecucion:
 
 
 def registrar_ejecucion(spark: SparkSession, ejecucion: Ejecucion, ruta_tabla: str) -> None:
-    spark.createDataFrame([asdict(ejecucion)]).write.format("delta").mode("append").option("mergeSchema", "true").save(
-        ruta_tabla
+    esquema = (
+        "batch_id string, entorno string, capa string, fuente string, tabla string, inicio timestamp, fin timestamp, "
+        "filas_leidas long, filas_escritas long, filas_rechazadas long, filas_consolidadas long, "
+        "estado string, mensaje string"
     )
+    spark.createDataFrame([asdict(ejecucion)], esquema).write.format("delta").mode("append").option(
+        "mergeSchema", "true"
+    ).save(ruta_tabla)
