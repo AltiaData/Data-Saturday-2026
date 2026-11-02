@@ -1,95 +1,76 @@
-# Antes de la sesión · Alumnos
+# Preparación del alumno · Fabric propio obligatorio
 
-## 1. Qué necesitas
+La única modalidad es ejecutar en tu propia suscripción/capacidad de Microsoft Fabric. Trae una cuenta de tu tenant,
+capacidad activa asignable a tus workspaces y permisos para crear y ejecutar lakehouses, notebooks y Environments.
+Una licencia Power BI Pro o PPU por sí sola no proporciona la capacidad de Fabric necesaria. Una capacidad Trial propia
+sirve si tu tenant permite activarla y sigue vigente durante el evento. Consulta las
+[licencias y capacidades de Fabric](https://learn.microsoft.com/en-us/fabric/enterprise/licenses).
+Los alumnos no necesitan bases de Azure SQL, cuentas Cosmos ni credenciales de los instructores.
 
-Para la modalidad guiada: esta copia, Git, PowerShell 7 y Python 3.11/3.12, con VS Code o editor equivalente.
-El instructor mostrará las ejecuciones de SQL/Fabric. No necesitas permisos cloud para generar y revisar el producto local.
+## 1. Herramientas antes del evento
 
-Para ejecutar pruebas Spark en tu equipo: Java 17 y las dependencias dev. En Windows se necesitan las utilidades
-nativas Hadoop para los escenarios Delta. El devcontainer Linux incluido evita esa preparación específica Windows.
-Instalar y descargar antes del evento; no dedicar los 35 minutos de greenfield a preparar Spark.
+Instala Git, PowerShell 7, Python 3.12, Azure CLI y un editor. Para pruebas locales Spark: Java 17 y dependencias dev;
+en Windows, las utilidades nativas de Hadoop, o usa el devcontainer Linux incluido. Esto debe resolverse antes del evento.
+La ejecución de las demos ocurre en Fabric; no depende de tener Spark local.
 
-Para laboratorio individual: el instructor debe asignarte base SQL, workspaces, Environment publicado, identidad
-y permisos propios. El repo no crea esos recursos al abrirlo.
+Desde la raíz de tu copia de alumnos o de la plantilla:
 
-## 2. Prepara Python en la copia entregada
-
-PowerShell, desde la raíz de la edición de alumnos:
-
-~~~powershell
+```powershell
 $Plantilla = (Get-Location).Path
 py -3.12 -m venv .venv
-$PythonPlantilla = Join-Path $Plantilla '.venv\Scripts\python.exe'
+$Python = Join-Path $Plantilla '.venv\Scripts\python.exe'
 $env:PATH = "$Plantilla\.venv\Scripts;$env:PATH"
-& $PythonPlantilla -m pip install -e '.[dev]'
-git --version
-& $PythonPlantilla -c "import datafwk; print(datafwk.__version__)"
-~~~
+& $Python -m pip install -e '.[dev,deploy]' build
+& $Python -m scripts.modificar_csv verificar
+Copy-Item .env.alumno.example .env.alumno
+```
 
-Con Python 3.11 sustituir `py -3.12` por `py -3.11`. Si el entorno ya existe, comprobarlo y reutilizarlo.
-**Esperado:** Git disponible y datafwk 0.2.0. Las herramientas y virtualenv del instructor no están incluidas.
+No sobrescribas `.env.alumno` si ya lo cumplimentaste. Es dotenv, no un script: no lo ejecutes con dot-sourcing.
+Los valores entre `<...>` son marcadores pendientes. Nunca escribas tokens o contraseñas en YAML ni notebooks.
 
-Para publicar en tu laboratorio individual, además:
+## 2. Tu fichero de entorno
 
-~~~powershell
-& $PythonPlantilla -m pip install -e '.[deploy]'
-az login --tenant '<tenant-asignado>'
-~~~
+Completa `.env.alumno` con estos datos:
 
-En el devcontainer, instalar con `python -m pip install -e '.[dev]'` y usar `python` en lugar de la ruta
-`.venv\Scripts\python.exe`. El resto de comandos PowerShell usan rutas Windows: adaptar las rutas al montaje Linux.
+| Campo | Dónde obtenerlo / uso |
+|---|---|
+| `AZURE_TENANT_ID` | Identificador de tu directorio Entra; la sesión CLI debe usar este tenant |
+| `FABRIC_CAPACITY_ID` | Capacidad propia activa; referencia para asignarla manualmente en Fabric |
+| `PROYECTO` | Nombre único, por ejemplo `fsh-alumno01`; letras minúsculas, números y guiones |
+| `ENTORNO` | `dev` para estas demos |
+| `WORKSPACE_*_NOMBRE` | Déjalos vacíos para derivar `<PROYECTO>-datos/ing/ana-dev`, o indica los nombres exactos |
+| `WS_DATOS_ID`, `WS_ING_ID`, `WS_ANA_ID` | GUID de cada workspace creado; se ve en su URL/configuración |
+| `ENV_FWK_ID` | GUID del Environment `env_fwk` creado en ingeniería |
+| `LAKEHOUSE_ESQUEMA` | `dbo` si los lakehouses tienen esquemas; vacío si no los tienen |
+| `DATA_ROOT` | `data`, relativo a la raíz del proyecto desde la que ejecutarás los comandos |
 
-## 3. Recibe la ficha y elige tu nombre de proyecto
+`FABRIC_CAPACITY_ID` es una referencia de preparación: los scripts no compran ni asignan capacidades.
+El alumno realiza esa asignación en el portal y comprueba que la capacidad está activa.
 
-Completar [ficha del laboratorio](00_ficha-laboratorio.md).
-En modo guiado, los campos cloud pertenecen a la demostración y se anotan para entenderla, no para publicar en ellos.
+## 3. Recursos propios antes de empezar
 
-El nombre del proyecto debe tener 3–40 caracteres, comenzar por letra minúscula y usar letras minúsculas,
-dígitos o guiones. Ejemplo: `fsh-equipo01`.
-La carpeta de destino debe ser nueva, hermana de la plantilla, nunca dentro de ella.
+1. En Fabric crea tres workspaces vacíos con los nombres elegidos: datos, ingeniería y analítica.
+2. Asígnalos a tu capacidad activa y comprueba que tu cuenta es administradora de los tres.
+3. En ingeniería crea un Environment llamado `env_fwk`. Anota su ID en `.env.alumno`.
+4. Selecciona un runtime soportado para tu tenant y valida las pruebas de humo antes del evento. Las pruebas locales
+   del repositorio usan Spark 3.5/Delta 3.3.2; no certifican automáticamente cualquier runtime cloud.
+5. Conserva los workspaces sin datos del workshop: el greenfield publicará los items durante la primera demo.
+6. Autentícate con tu tenant; si no tienes una suscripción Azure de facturación, permite una sesión sin suscripciones:
 
-No crear aún el producto: lo haremos en la demo 1. Los ocho IDs de Fabric se renuevan con el generador,
-no con una copia manual o git clone.
+```powershell
+az login --tenant '<tu-tenant-id>' --allow-no-subscriptions
+```
 
-## 4. Lee el contexto
+El inicio de sesión puede pedir MFA. Usa el mismo tenant en portal y CLI. Véase
+[inicio de sesión con Azure CLI](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli-interactively).
+No pegues tokens en el fichero de entorno.
 
-- [Convenciones](../convenciones.md): dónde vive cada pieza.
-- [Glosario](../glosario.md): las definiciones de negocio se acuerdan.
-- [ADR de evolución](../adr/0002-evolucion-cargas-calidad-historia.md): extracción, calidad e historia.
-- [Demos](02_seguir-las-demos.md): comandos y preguntas del recorrido.
+## 4. Qué debes tener al llegar
 
-No es necesario memorizar el motor. Localiza:
-`config/fuentes/`, `contracts/`, `config/modelos/`, `src/datafwk/` y `templates/workshop/`.
+- `.env.alumno` cumplimentado y fuera de Git; tres workspaces propios y capacidad activa.
+- Environment `env_fwk` creado; Python, paquetes y autenticación probados.
+- `python -m scripts.modificar_csv verificar` termina correctamente.
+- La carpeta `data/original` contiene el volcado distribuido; aún no hay modificaciones ni cargas de las demos.
 
-### Herramientas de validación en Windows
-
-Para los hooks Terraform en Windows, Git Bash debe estar en el PATH:
-
-~~~powershell
-$GitRoot = Split-Path -Parent (Split-Path -Parent (Get-Command git).Source)
-$env:PATH = "$GitRoot\bin;$GitRoot\usr\bin;$env:PATH"
-Get-Command bash
-~~~
-
-Si pytest informa de acceso denegado a `pytest-of-<usuario>`, usar una carpeta temporal nueva dentro del producto:
-
-~~~powershell
-$TmpPruebas = Join-Path $Proyecto ('.herramientas/pytest-' + (Get-Date -Format 'yyyyMMddHHmmss'))
-& $Python -m pytest --delta -q --basetemp $TmpPruebas
-~~~
-
-Este comando se ejecuta después de preparar `$Proyecto` y `$Python`. No modificar permisos de carpetas temporales
-de otros procesos. Un bloqueo de Control de aplicaciones de Windows debe resolverlo el administrador o validarse
-en el devcontainer; no desactivar hooks para obtener un resultado verde.
-
-## 5. Antes de comenzar
-
-- [ ] Puedo abrir esta copia y ejecutar Python.
-- [ ] Entiendo si mi modalidad es guiada o individual.
-- [ ] Tengo un nombre y una carpeta nueva para greenfield.
-- [ ] Si ejecuto Spark local, Java/runtime están probados.
-- [ ] Si publico en cloud, tengo recursos aislados y conectividad ya comprobada.
-- [ ] Sé que los cambios de SQL los coordina el instructor.
-
-Si no tienes laboratorio individual, sigue todos los cambios locales y anota los resultados mostrados.
-Una carga observada en pantalla no es una ejecución propia; registra esa diferencia en tu ficha.
+La siguiente guía es [Seguir las demos](02_seguir-las-demos.md). El instructor no entrega credenciales ni workspaces
+compartidos como alternativa a esta preparación.

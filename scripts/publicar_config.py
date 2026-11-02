@@ -19,7 +19,7 @@ from datafwk.config import Entorno, cargar_yaml  # noqa: E402
 ONELAKE = "https://onelake.dfs.fabric.microsoft.com"
 
 
-def main() -> None:
+def main(credencial=None) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--entorno", required=True, choices=["dev", "test", "prod"])
     args = parser.parse_args()
@@ -28,7 +28,7 @@ def main() -> None:
     from azure.storage.filedatalake import DataLakeServiceClient
 
     entorno = Entorno.desde_dict(cargar_yaml(str(RAIZ / "config" / "entornos" / f"{args.entorno}.yml")))
-    sistema = DataLakeServiceClient(ONELAKE, credential=AzureCliCredential()).get_file_system_client(
+    sistema = DataLakeServiceClient(ONELAKE, credential=credencial or AzureCliCredential()).get_file_system_client(
         entorno.workspace_datos
     )
     ficheros = sorted([*(RAIZ / "config").rglob("*.yml"), *(RAIZ / "contracts").rglob("*.yml")])

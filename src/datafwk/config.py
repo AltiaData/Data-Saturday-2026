@@ -184,8 +184,8 @@ def cargar_fuentes(datos: dict[str, Any]) -> dict[str, Fuente]:
         clave = tuple(_obligatorio(cfg, "clave_negocio", ctx))
         origen = OrigenSql.desde_dict(cfg["origen_sql"]) if "origen_sql" in cfg else None
         extraccion = Extraccion.desde_dict(cfg.get("extraccion", {}))
-        if extraccion.modo == "incremental" and (origen is None or modo != "merge"):
-            raise ConfiguracionInvalida(f"{ctx}: incremental requiere SQL y modo_carga merge")
+        if extraccion.modo == "incremental" and (modo != "merge" or (origen is None and cfg.get("formato") != "csv")):
+            raise ConfiguracionInvalida(f"{ctx}: incremental requiere SQL o CSV y modo_carga merge")
         if origen and extraccion.columna_marca and extraccion.columna_marca not in origen.columnas:
             raise ConfiguracionInvalida(f"{ctx}: columna_marca debe estar en las columnas SQL proyectadas")
         if origen and not set(clave).issubset(origen.columnas.values()):

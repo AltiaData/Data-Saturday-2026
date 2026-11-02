@@ -17,7 +17,7 @@ from urllib.parse import quote
 API = "https://api.fabric.microsoft.com/v1"
 
 
-def main() -> None:
+def main(credencial=None) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--wheel", required=True, help="ruta o patrón del .whl")
     args = parser.parse_args()
@@ -30,7 +30,7 @@ def main() -> None:
         raise SystemExit("El patrón debe identificar exactamente un wheel")
     wheel = coincidencias[0]
     workspace, environment = os.environ["WS_ING_ID"], os.environ["ENV_FWK_ID"]
-    token = AzureCliCredential().get_token("https://api.fabric.microsoft.com/.default").token
+    token = (credencial or AzureCliCredential()).get_token("https://api.fabric.microsoft.com/.default").token
     cabeceras = {"Authorization": f"Bearer {token}"}
     base = f"{API}/workspaces/{workspace}/environments/{environment}"
 

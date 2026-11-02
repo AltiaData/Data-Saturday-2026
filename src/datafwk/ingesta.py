@@ -11,7 +11,7 @@ from datafwk.auditoria import Ejecucion, nuevo_batch_id, registrar_ejecucion
 from datafwk.config import Entorno, Fuente
 from datafwk.control import Control, Lote, existe, leer_version, version
 from datafwk.incremental import planificar
-from datafwk.origenes import sql
+from datafwk.origenes import archivos, sql
 
 if TYPE_CHECKING:
     from pyspark.sql import SparkSession
@@ -64,6 +64,7 @@ def a_bronze(spark: SparkSession, fuente: Fuente, entorno: Entorno, batch_id: st
                     .options(**fuente.opciones_lectura)
                     .load(rutas.ficheros(entorno, "bronze", fuente.ruta_landing))
                 )
+                df = archivos.aplicar_ventana(df, fuente.extraccion, lote.intervalo)
             df = (
                 df.withColumn("_ingested_at", F.lit(lote.observado_en))
                 .withColumn("_observado_en", F.lit(lote.observado_en))

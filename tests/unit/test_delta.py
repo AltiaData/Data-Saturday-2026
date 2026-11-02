@@ -15,6 +15,46 @@ from datafwk.ingesta import a_bronze
 from datafwk.origenes import sql
 from datafwk.silver import a_silver
 
+
+def test_csv_completa_incremental_reintento_y_lote_vacio(spark, tmp_path, monkeypatch):
+    from datafwk import ingesta
+
+    entorno, fuente, contrato, estado = escenario(spark, tmp_path, monkeypatch)
+    fichero = tmp_path / "clientes.csv"
+    fuente = replace(
+        fuente,
+        formato="csv",
+        ruta_landing="landing/clientes.csv",
+        origen_sql=None,
+        opciones_lectura={"header": "true"},
+        extraccion=Extraccion(columna_marca="fecha_cambio", estabilizacion_segundos=0, solape_segundos=0),
+    )
+    monkeypatch.setattr(rutas, "ficheros", lambda *_: str(fichero))
+
+    class Reloj:
+        @staticmethod
+        def now(_zona):
+            return estado["reloj"]
+
+    monkeypatch.setattr(ingesta, "datetime", Reloj)
+    fichero.write_text("id_cliente,ciudad,fecha_cambio\n1,A,2025-12-31T23:00:00Z\n", encoding="utf-8")
+    assert a_bronze(spark, fuente, entorno, "csv0").filas_leidas == 1
+    a_silver(spark, fuente, contrato, entorno, "csv0")
+    fuente = replace(fuente, extraccion=replace(fuente.extraccion, modo="incremental"))
+    estado["reloj"] += timedelta(minutes=1)
+    fichero.write_text("id_cliente,ciudad,fecha_cambio\n1,B,2026-01-01T00:00:30Z\n", encoding="utf-8")
+    assert a_bronze(spark, fuente, entorno, "csv1").filas_leidas == 1
+    fichero.write_text("id_cliente,ciudad,fecha_cambio\n1,C,2026-01-01T00:00:40Z\n", encoding="utf-8")
+    a_bronze(spark, fuente, entorno, "csv1")
+    a_silver(spark, fuente, contrato, entorno, "csv1")
+    resultado = leer_version(spark, rutas.tabla(entorno, "silver", "clientes"))
+    assert resultado.select("ciudad").first()[0] == "B"
+    estado["reloj"] += timedelta(minutes=1)
+    assert a_bronze(spark, fuente, entorno, "csv2").filas_leidas == 0
+    a_silver(spark, fuente, contrato, entorno, "csv2")
+    assert Control(spark, entorno).marca(fuente.identidad) == estado["reloj"]
+
+
 pytestmark = [pytest.mark.spark, pytest.mark.delta]
 
 

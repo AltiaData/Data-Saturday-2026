@@ -34,7 +34,7 @@ EXCLUIR = {
 def excluido(ruta: Path) -> bool:
     return (
         ruta.name in EXCLUIR
-        or ruta.name.startswith(".env")
+        or (ruta.name.startswith(".env") and ruta.name != ".env.alumno.example")
         or ruta.suffix in {".pyc", ".tfstate", ".tfvars"}
         or ruta.name.endswith(".egg-info")
         or ruta.name == "derby.log"
@@ -52,6 +52,8 @@ def crear(destino: Path, proyecto: str, origen: Path = RAIZ) -> int:
     candidatas = []
     for ruta in origen.rglob("*"):
         relativa = ruta.relative_to(origen)
+        if relativa.parts[:2] == ("data", "laboratorio"):
+            continue
         if any(excluido(Path(p)) for p in relativa.parts):
             continue
         if ruta.is_symlink():

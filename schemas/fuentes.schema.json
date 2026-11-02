@@ -193,8 +193,11 @@
           },
           "then": {
             "required": [
-              "origen_sql",
               "modo_carga"
+            ],
+            "anyOf": [
+              { "required": ["origen_sql"] },
+              { "required": ["formato"], "properties": { "formato": { "const": "csv" } } }
             ],
             "properties": {
               "modo_carga": {

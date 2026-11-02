@@ -17,5 +17,9 @@ derby.log
 *.tfvars
 !ejemplo.tfvars
 .env
+.env.*
+!.env.alumno.example
+!.env.instructor.example
+data/laboratorio/
 .agent/
 .herramientas/
