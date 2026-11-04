@@ -22,7 +22,7 @@ Los identificadores, IDs de workspace y datos del tenant se guardan solo en `.en
 |---|---|---|
 | `alumno-99/setup` | Preparación previa (`01_antes-de-la-sesion.md`), correcciones y este diario (versión de referencia) | En curso |
 | `alumno-99/demo-01` | Punto inicial de la demo 1: proyecto greenfield | Ensayada |
-| `alumno-99/demo-02` | Punto inicial de la demo 2: carga completa CRM y tipo1 | Creada |
+| `alumno-99/demo-02` | Punto inicial de la demo 2: carga completa CRM y tipo1 | Ensayada |
 | `alumno-99/demo-03` | Punto inicial de la demo 3: errores de origen y cuarentena Q1–Q4 | Pendiente |
 | `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Pendiente |
 | `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Pendiente |
@@ -67,6 +67,9 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 14 | Demo 1 | `scripts/laboratorio.py` | `laboratorio datos` falla con `FriendlyNameSupportDisabled`: mezclaba el GUID del workspace con el nombre `lh_bronze.Lakehouse`. `config` funcionaba porque usa nombres | `publicar_datos` usa el nombre del workspace, como `publicar_config` | Hecho |
 | 15 | Demo 1 | `02_seguir-las-demos.md`, `02_plan-sesion-4-horas.md` | Publicar el wheel en `env_fwk` tarda unos 6 minutos (354 s) de los 35 del bloque; el resto de la publicación, menos de 1 minuto | Valorar publicar el wheel en la preparación previa | Pendiente |
 | 16 | Demo 1 | `.env.alumno.example`, `.env.instructor.example`, `01_antes-de-la-sesion.md`, `02_seguir-las-demos.md` | `LAKEHOUSE_ESQUEMA=dbo` por defecto, pero los lakehouses que publica el repo no tienen esquemas (`lakehouse.metadata.json` vacío; API: `defaultSchema` vacío). Las tablas irían a `Tables/dbo/` y no aparecerían en el SQL endpoint | Valor por defecto vacío y explicación en las guías; proyecto generado reconfigurado y `config` publicado de nuevo | Hecho |
+| 17 | Demo 2 | `02_seguir-las-demos.md`, `01_antes-de-la-sesion.md` | Trial FTL4: cada notebook lanzado justo después de otro falla con `TooManyRequestsForCapacity` (430); entra al reintentar 60 s después. En el portal la sesión interactiva sigue viva tras ejecutar, así que el siguiente notebook fallará siempre | Instrucción «una sesión cada vez: Stop session» y aviso del SKU en la preparación | Hecho |
+| 18 | Demo 2 | `02_seguir-las-demos.md` | Los SQL endpoints no mostraban ninguna tabla minutos después de cargar; aparecieron al forzar la sincronización de metadatos | Instrucción concreta: botón Refresh del SQL analytics endpoint | Hecho |
+| 19 | Demo 2 | `02_plan-sesion-4-horas.md` | Cada notebook tarda 90–115 s (arranque en frío) y más con reintentos: la demo 2 son 6 ejecuciones (unos 12–20 min de sus 25) | Revisar tiempos del plan al terminar el ensayo | Pendiente |
 
 ## Registro
 
@@ -105,3 +108,14 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   (`getDefinition`: los cinco referencian `env_fwk`; sin lakehouse por defecto, no necesario).
 - Creada `alumno-99/demo-02` con el proyecto generado (28 ficheros respecto a `demo-01`); antes, comprobado que
   ningún fichero versionable contiene IDs del tenant y sincronizados desde `setup` los cuatro ficheros desfasados.
+
+### 2026-11-05 · Demo 2 (rama `alumno-99/demo-02`)
+
+- Notebooks ejecutados con la API de jobs de Fabric (`RunNotebook` con parámetros), prototipo de `alcanzar`.
+- `crm-base`: bronze 112 s, silver 115 s, gold falló con 430 (hallazgo 17) y completó al reintentar (107 s).
+- Tablas en OneLake bajo `Tables/` sin subcarpeta `dbo` (confirma el hallazgo 16). SQL endpoints vacíos hasta forzar
+  la sincronización de metadatos (hallazgo 18).
+- Resultados: bronze 100 observaciones; silver 100 clientes; `dim_cliente` 100 filas y `C0001` en Sevilla;
+  `fwk_lotes` con `crm-base` confirmado (completa, contrato v1); marca registrada. Coincide con la guía.
+- Repetición de `crm-base` (bronze 88 s; silver y gold con un reintento por 430): 100 filas y 100 claves en las tres
+  capas, un único lote, misma marca; `fwk_ejecuciones` registra 6 ejecuciones. Idempotencia confirmada.

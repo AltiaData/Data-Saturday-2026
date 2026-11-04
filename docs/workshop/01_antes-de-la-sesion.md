@@ -51,6 +51,8 @@ Completa `.env.alumno` con estos datos:
 
 `FABRIC_CAPACITY_ID` es una referencia de preparación: los scripts no compran ni asignan capacidades.
 El alumno realiza esa asignación en el portal y comprueba que la capacidad está activa.
+Mira también su SKU: en capacidades pequeñas (Trial FTL4, F2–F8) solo cabe una sesión de Spark a la vez, y durante
+las demos habrá que detener cada sesión antes de ejecutar el siguiente notebook.
 
 ## 3. Recursos propios antes de empezar
 

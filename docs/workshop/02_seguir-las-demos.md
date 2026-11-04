@@ -75,8 +75,15 @@ No cambies lógica ni imports. El Environment ya debe estar seleccionado.
 
 Ejecuta en orden y espera a que termine cada notebook. Un lote es el mismo identificador en bronze/silver/gold;
 cada nueva observación lleva uno nuevo. Reintentar significa repetir el identificador original y su operación.
+
+**Una sesión cada vez.** En capacidades pequeñas (Trial FTL4, F2–F8) solo cabe una sesión de Spark: al terminar un
+notebook, pulsa **Stop session** antes de abrir el siguiente. Si no, el siguiente falla con
+`TooManyRequestsForCapacity` (HTTP 430). Tras detenerla, espera un minuto a que la capacidad libere los vCores.
+Cada ejecución tarda entre 1,5 y 2 minutos, la mayor parte en arrancar la sesión.
+
 Usa las salidas de los notebooks y el SQL analytics endpoint del lakehouse correspondiente para comprobar tablas.
-El endpoint puede tardar en sincronizar metadatos; refresca antes de interpretar una tabla ausente como fallo.
+El endpoint no ve las tablas nuevas hasta sincronizar metadatos: si una tabla no aparece, pulsa **Refresh** en el
+SQL analytics endpoint antes de interpretarlo como fallo. En el ensayo, sin refrescar seguían invisibles minutos después.
 
 ## 00:50–01:15 · Demo 2: carga completa y dimensión tipo1
 
