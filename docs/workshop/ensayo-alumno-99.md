@@ -20,14 +20,17 @@ Los identificadores, IDs de workspace y datos del tenant se guardan solo en `.en
 
 | Rama | Contenido | Estado |
 |---|---|---|
-| `alumno-99/setup` | Preparación previa (`01_antes-de-la-sesion.md`) y este diario | En curso |
-| `alumno-99/demo-01` | Punto inicial de la demo 1: proyecto greenfield | Pendiente |
-| `alumno-99/demo-02` | Punto inicial de la demo 2: carga completa CRM y tipo1 | Pendiente |
+| `alumno-99/setup` | Preparación previa (`01_antes-de-la-sesion.md`), correcciones y este diario (versión de referencia) | En curso |
+| `alumno-99/demo-01` | Punto inicial de la demo 1: proyecto greenfield | Ensayada |
+| `alumno-99/demo-02` | Punto inicial de la demo 2: carga completa CRM y tipo1 | Creada |
 | `alumno-99/demo-03` | Punto inicial de la demo 3: errores de origen y cuarentena Q1–Q4 | Pendiente |
 | `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Pendiente |
 | `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Pendiente |
 | `alumno-99/demo-06` | Punto inicial de la demo 6: consumo y documentos Cosmos | Pendiente |
 | `alumno-99/demo-07` | Punto inicial de la demo 7: revisión del cambio | Pendiente |
+
+Desde `demo-02`, cada rama contiene el proyecto generado (`crear_proyecto.py`) tal como queda al empezar esa
+demo. Las correcciones se hacen en `setup` y se fusionan en las ramas de demo.
 
 ## Estado en Fabric por demo
 
@@ -98,3 +101,7 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   `datos` falló (hallazgo 14); corregido en `setup` y repetido con éxito.
 - Lakehouses sin esquemas y `LAKEHOUSE_ESQUEMA=dbo` (hallazgo 16): corregido en `setup`; `configurar` y `config`
   repetidos en el proyecto generado.
+- Vinculación de los cinco notebooks a `env_fwk` hecha en el portal por el instructor; verificada por API
+  (`getDefinition`: los cinco referencian `env_fwk`; sin lakehouse por defecto, no necesario).
+- Creada `alumno-99/demo-02` con el proyecto generado (28 ficheros respecto a `demo-01`); antes, comprobado que
+  ningún fichero versionable contiene IDs del tenant y sincronizados desde `setup` los cuatro ficheros desfasados.
