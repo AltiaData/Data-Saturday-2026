@@ -53,7 +53,8 @@ Publica los recursos sin eliminar items huérfanos:
 Resultado: `lh_bronze`, `lh_silver`, `lh_gold` en datos; cinco notebooks en ingeniería; wheel 0.3.0 publicado en
 `env_fwk`; YAML en `lh_bronze/Files/_framework` y CSV en `Files/landing`.
 En Fabric, vincula **cada notebook** al Environment `env_fwk` publicado y guarda. Detén sesiones anteriores para que
-carguen el nuevo wheel. Comprueba `LAKEHOUSE_ESQUEMA` contra el tipo real de lakehouse.
+carguen el nuevo wheel. Los lakehouses publicados no tienen esquemas: `LAKEHOUSE_ESQUEMA` debe estar vacío y
+`config/entornos/dev.yml` sin clave `esquema`. En el SQL analytics endpoint sus tablas aparecen igualmente bajo `dbo`.
 No publiques analítica ni ejecutes `desplegar.py` completo: estos ejercicios crean la dimensión del workshop,
 no las tablas de ventas de los ejemplos genéricos de la plantilla.
 

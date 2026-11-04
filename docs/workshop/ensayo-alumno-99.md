@@ -63,6 +63,7 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 13 | Setup | `01_antes-de-la-sesion.md` | La instalación tarda unos 7 minutos (descarga de `pyspark`); no se avisaba | Aviso de hacerla antes del evento | Hecho |
 | 14 | Demo 1 | `scripts/laboratorio.py` | `laboratorio datos` falla con `FriendlyNameSupportDisabled`: mezclaba el GUID del workspace con el nombre `lh_bronze.Lakehouse`. `config` funcionaba porque usa nombres | `publicar_datos` usa el nombre del workspace, como `publicar_config` | Hecho |
 | 15 | Demo 1 | `02_seguir-las-demos.md`, `02_plan-sesion-4-horas.md` | Publicar el wheel en `env_fwk` tarda unos 6 minutos (354 s) de los 35 del bloque; el resto de la publicación, menos de 1 minuto | Valorar publicar el wheel en la preparación previa | Pendiente |
+| 16 | Demo 1 | `.env.alumno.example`, `.env.instructor.example`, `01_antes-de-la-sesion.md`, `02_seguir-las-demos.md` | `LAKEHOUSE_ESQUEMA=dbo` por defecto, pero los lakehouses que publica el repo no tienen esquemas (`lakehouse.metadata.json` vacío; API: `defaultSchema` vacío). Las tablas irían a `Tables/dbo/` y no aparecerían en el SQL endpoint | Valor por defecto vacío y explicación en las guías; proyecto generado reconfigurado y `config` publicado de nuevo | Hecho |
 
 ## Registro
 
@@ -95,3 +96,5 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   `generar_catalogo`) en `C:\src\TRIBUS\fsh-alumno99-lab`: sin errores, 33 s.
 - Publicación: `lakehouses` 24 s, `build` 5 s, `wheel` 354 s (hallazgo 15), `notebooks` 11 s, `config` 15 s.
   `datos` falló (hallazgo 14); corregido en `setup` y repetido con éxito.
+- Lakehouses sin esquemas y `LAKEHOUSE_ESQUEMA=dbo` (hallazgo 16): corregido en `setup`; `configurar` y `config`
+  repetidos en el proyecto generado.

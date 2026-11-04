@@ -46,7 +46,7 @@ Completa `.env.alumno` con estos datos:
 | `WORKSPACE_*_NOMBRE` | Déjalos vacíos para derivar `<PROYECTO>-datos/ing/ana-dev`, o indica los nombres exactos |
 | `WS_DATOS_ID`, `WS_ING_ID`, `WS_ANA_ID` | GUID de cada workspace creado; se ve en su URL/configuración |
 | `ENV_FWK_ID` | GUID del Environment `env_fwk` creado en ingeniería |
-| `LAKEHOUSE_ESQUEMA` | `dbo` si los lakehouses tienen esquemas; vacío si no los tienen |
+| `LAKEHOUSE_ESQUEMA` | Vacío: los lakehouses que publica el repositorio no tienen esquemas. `dbo` solo si los creaste con esquemas |
 | `DATA_ROOT` | `data`, relativo a la raíz del proyecto desde la que ejecutarás los comandos |
 
 `FABRIC_CAPACITY_ID` es una referencia de preparación: los scripts no compran ni asignan capacidades.
