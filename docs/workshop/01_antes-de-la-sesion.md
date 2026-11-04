@@ -52,8 +52,20 @@ El alumno realiza esa asignación en el portal y comprueba que la capacidad est�
 1. En Fabric crea tres workspaces vacíos con los nombres elegidos: datos, ingeniería y analítica.
 2. Asígnalos a tu capacidad activa y comprueba que tu cuenta es administradora de los tres.
 3. En ingeniería crea un Environment llamado `env_fwk`. Anota su ID en `.env.alumno`.
-4. Selecciona un runtime soportado para tu tenant y valida las pruebas de humo antes del evento. Las pruebas locales
-   del repositorio usan Spark 3.5/Delta 3.3.2; no certifican automáticamente cualquier runtime cloud.
+4. Selecciona el runtime de Spark y valida las pruebas de humo antes del evento. Las pruebas locales del repositorio
+   usan Spark 3.5/Delta 3.3.2; no certifican automáticamente cualquier runtime cloud. El runtime se fija en dos sitios:
+   - **Environment** (el que usan los notebooks): abre `env_fwk` en el workspace de ingeniería, elige en el
+     desplegable **Runtime** de la pestaña *Home* la versión con Spark 3.5 (Runtime 1.3: Spark 3.5, Delta 3.2,
+     Python 3.11), guarda y pulsa **Publish**. La publicación tarda unos minutos.
+   - **Workspace** (valor por defecto): *Workspace settings → Data Engineering/Science → Spark settings →
+     Environment*. Pon el mismo runtime. Opcionalmente, activa *Set default environment* con `env_fwk` para que los
+     notebooks lo usen sin vincularlos uno a uno.
+
+   El valor por defecto actual es Runtime 2.0 (Spark 4, modo ANSI activo), con el que el framework no está
+   validado: cámbialo. `infra/lab/New-LabResources.ps1` lo hace en ambos sitios y publica el Environment.
+   Elige el runtime **antes** de publicar el wheel: cambiarlo después obliga a publicar de nuevo el Environment.
+   La librería exige Python 3.10 o superior, compatible con Runtime 1.3. Comprueba en el portal los nombres
+   vigentes de los runtimes: Microsoft los renueva periódicamente.
 5. Conserva los workspaces sin datos del workshop: el greenfield publicará los items durante la primera demo.
 6. Autentícate con tu tenant; si no tienes una suscripción Azure de facturación, permite una sesión sin suscripciones:
 
@@ -63,7 +75,16 @@ az login --tenant '<tu-tenant-id>' --allow-no-subscriptions
 
 El inicio de sesión puede pedir MFA. Usa el mismo tenant en portal y CLI. Véase
 [inicio de sesión con Azure CLI](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli-interactively).
-No pegues tokens en el fichero de entorno.
+No pegues tokens en el fichero de entorno. Comprueba la cuenta activa con `az account show`: si usas también una
+cuenta corporativa, la CLI puede seguir en otro tenant. Usa **la misma cuenta** en el portal y en la CLI: los
+workspaces creados desde la CLI solo dan rol Admin a esa cuenta. El rol de administrador de Fabric permite verlos
+en el portal de administración, pero no abrir ni ejecutar su contenido. Fabric no admite cuentas personales de
+Microsoft (outlook.com, hotmail.com): si creaste el tenant con una, crea en él una cuenta de la organización y úsala
+en ambos sitios.
+
+Los pasos 1 a 3 pueden automatizarse una vez iniciada la sesión: `pwsh ./infra/lab/New-LabResources.ps1` crea los tres
+workspaces y `env_fwk` si no existen y escribe sus IDs en `.env.alumno`. Ejecútalo antes con `-WhatIf` para ver qué hará.
+El runtime del Environment se sigue eligiendo en el portal. Detalle en [infra/lab](../../infra/lab/README.md).
 
 ## 4. Qué debes tener al llegar
 
