@@ -9,7 +9,8 @@ Los alumnos no necesitan bases de Azure SQL, cuentas Cosmos ni credenciales de l
 
 ## 1. Herramientas antes del evento
 
-Instala Git, PowerShell 7, Python 3.12, Azure CLI y un editor. Para pruebas locales Spark: Java 17 y dependencias dev;
+Instala Git, PowerShell 7, Python 3.11 o 3.12, Azure CLI y un editor. Python 3.11 coincide con el de Fabric
+Runtime 1.3; `pyspark` 3.5 no admite 3.13. Comprueba las versiones instaladas con `py --list`. Para pruebas locales Spark: Java 17 y dependencias dev;
 en Windows, las utilidades nativas de Hadoop, o usa el devcontainer Linux incluido. Esto debe resolverse antes del evento.
 La ejecución de las demos ocurre en Fabric; no depende de tener Spark local.
 
@@ -17,15 +18,19 @@ Desde la raíz de tu copia de alumnos o de la plantilla:
 
 ```powershell
 $Plantilla = (Get-Location).Path
-py -3.12 -m venv .venv
+py -3.11 -m venv .venv    # o -3.12
 $Python = Join-Path $Plantilla '.venv\Scripts\python.exe'
+if (-not (Test-Path $Python)) { throw 'No se creó .venv: instala Python 3.11 o 3.12 (py --list)' }
 $env:PATH = "$Plantilla\.venv\Scripts;$env:PATH"
+& $Python -m pip install --upgrade pip
 & $Python -m pip install -e '.[dev,deploy]' build
 & $Python -m scripts.modificar_csv verificar
-Copy-Item .env.alumno.example .env.alumno
+if (-not (Test-Path .env.alumno)) { Copy-Item .env.alumno.example .env.alumno }
 ```
 
-No sobrescribas `.env.alumno` si ya lo cumplimentaste. Es dotenv, no un script: no lo ejecutes con dot-sourcing.
+Actualiza pip antes de instalar: el que trae el venv puede ser antiguo y falla con `MemoryError` al cachear `pyspark`.
+La instalación descarga varios cientos de MB y tarda varios minutos (unos siete en el ensayo): hazla antes del evento.
+La última línea no sobrescribe un `.env.alumno` ya cumplimentado. Es dotenv, no un script: no lo ejecutes con dot-sourcing.
 Los valores entre `<...>` son marcadores pendientes. Nunca escribas tokens o contraseñas en YAML ni notebooks.
 
 ## 2. Tu fichero de entorno

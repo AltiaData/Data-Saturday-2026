@@ -42,8 +42,9 @@ El volcado incluido fue leído el 2 de noviembre de 2026 entre 07:28:38 y 07:45:
 no un snapshot transaccional entre servicios. `data/original/manifest.json` es la referencia verificable.
 
 ```powershell
-py -3.12 -m venv .venv
+py -3.11 -m venv .venv    # o -3.12; pyspark 3.5 no admite 3.13
 $Python = Join-Path (Get-Location).Path '.venv\Scripts\python.exe'
+& $Python -m pip install --upgrade pip
 & $Python -m pip install -e '.[dev,deploy,export]' build
 & $Python -m scripts.modificar_csv verificar
 ```

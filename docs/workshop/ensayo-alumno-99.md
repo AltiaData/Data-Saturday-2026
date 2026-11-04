@@ -57,6 +57,10 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 7 | Setup | Identidades | Portal con `fabric-admin@midatalab.com`, CLI con la cuenta invitada de outlook: los workspaces solo tenían Admin para la cuenta de la CLI y no eran visibles en el portal | Aviso «misma cuenta en portal y CLI» y «sin cuentas personales» en la guía; el script rechaza cuentas `#EXT#`. El rol de administrador de Fabric no da acceso al contenido del workspace | Parcial: `fabric-admin` ya es Admin de los tres workspaces; falta pasar la CLI a esa cuenta |
 | 8 | Setup | `docs/workshop/01_antes-de-la-sesion.md` | El paso 4 decía «selecciona un runtime soportado» sin indicar dónde ni cuál | Ubicación en Environment y workspace, Runtime 1.3 y orden respecto al wheel | Hecho |
 | 9 | Setup | Fabric | Environment y workspace nacen en Runtime 2.0 (Spark 4, ANSI): no validado; riesgo en los casts de la cuarentena | El script fija 1.3 en `env_fwk` (publicado) y en el workspace; aviso en la guía. Validar 2.0 queda para otra edición | Hecho |
+| 10 | Setup | `01_antes-de-la-sesion.md`, `01_preparacion-instructores.md` | Exigían `py -3.12`; el equipo de ensayo solo tenía 3.11 y 3.13 y los comandos siguientes seguían ejecutándose sin venv. `pyproject.toml` admite ≥ 3.10 y Runtime 1.3 usa 3.11 | Python 3.11 o 3.12, `py --list`, comprobación de que existe el venv | Hecho |
+| 11 | Setup | Ídem | pip 22.3 del venv de 3.11: `MemoryError` al cachear `pyspark`; la instalación falla y `verificar` da `No module named 'datafwk'` | `pip install --upgrade pip` antes de instalar | Hecho |
+| 12 | Setup | `01_antes-de-la-sesion.md` | `Copy-Item .env.alumno.example .env.alumno` sobrescribía el dotenv; el aviso venía después del comando | Copia condicionada a que no exista | Hecho |
+| 13 | Setup | `01_antes-de-la-sesion.md` | La instalación tarda unos 7 minutos (descarga de `pyspark`); no se avisaba | Aviso de hacerla antes del evento | Hecho |
 
 ## Registro
 
@@ -77,5 +81,8 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   `fabric-admin` es ahora Admin de los tres workspaces. El script rechaza ya la cuenta invitada de la CLI.
 - CLI pasada a `fabric-admin@midatalab.com`; el script lo encuentra todo «existente». `env_fwk` y el workspace
   estaban en Runtime 2.0: fijado 1.3 y publicado `env_fwk` (estado `Success`). El script lo hace ya por sí mismo.
+- Role-play de la preparación local (sección 1): `py -3.12` falla (hallazgo 10); con 3.11, `pip install` falla por
+  `MemoryError` (11); tras actualizar pip, instalación correcta en unos 7 minutos y `modificar_csv verificar`:
+  «Volcado íntegro: hashes, recuentos y documentos JSON correctos».
 - `pre-commit run --files` sobre los ficheros cambiados: todo en verde. `gitleaks` y `check-merge-conflict` se
   ejecutaron sin el bloqueo `WinError 4551` que recoge `03_validacion-edicion.md`; falta repetir `--all-files`.
