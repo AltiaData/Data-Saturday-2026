@@ -20,7 +20,7 @@
 # PARAMETERS CELL ********************
 
 entorno = "dev"
-workspace_datos = "proyecto-datos-dev"
+workspace_datos = "fsh-alumno99-datos-dev"
 dominio = "ventas"
 fuente = "pedidos"
 batch_id = ""   # obligatorio: salida de bronze; para cambiar reglas usa nb_90_ops_revalidar

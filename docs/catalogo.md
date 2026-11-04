@@ -19,6 +19,19 @@ Un cliente por fila, con su segmento comercial vigente.
 | `provincia` | string | sí |  | Provincia de residencia o domicilio fiscal |
 | `acepta_comunicaciones` | boolean | no |  | Consentimiento de comunicaciones comerciales |
 
+### `clientes_crm`
+
+Estado actual de un cliente del CRM observado en la base SQL.
+
+- **Dominio:** crm · **Propietario:** @org/datos-workshop
+- **Clave:** id_cliente · **Si incumple el contrato:** cuarentena
+
+| Columna | Tipo | Nulos | Valores | Descripción |
+|---|---|---|---|---|
+| `id_cliente` | string | no |  | Identificador CRM customer_id |
+| `ciudad` | string | sí |  | Ciudad declarada en CRM |
+| `fecha_cambio` | timestamp | no |  | updated_at del origen en UTC |
+
 ### `fwk_cuarentena`
 
 Evidencias de rechazo por fuente, observacion y version de contrato. Conserva el dato bruto.
@@ -113,6 +126,23 @@ Estado recuperable de un lote de extracción y publicación silver.
 | `version_silver` | bigint | no |  | Versión fijada de entrada |
 | `version_gold` | bigint | sí |  | Versión histórica publicada |
 
+### `lineas_devolucion`
+
+Una linea devuelta observada en SQL; contrato docente Q1 del workshop.
+
+- **Dominio:** devoluciones · **Propietario:** @org/datos-workshop
+- **Clave:** id_linea_devolucion · **Si incumple el contrato:** cuarentena
+
+| Columna | Tipo | Nulos | Valores | Descripción |
+|---|---|---|---|---|
+| `id_linea_devolucion` | string | no |  | return_line_id del origen |
+| `importe_reembolso` | decimal(18,2) | no |  | refund_amount del origen; regla docente de no negatividad |
+| `motivo` | string | sí |  | return_reason del origen |
+
+**Reglas:**
+
+- `reembolso_no_negativo`: `importe_reembolso >= 0` — Regla de calidad acordada para la demo del workshop
+
 ### `pedidos`
 
 Un pedido de cliente por fila, en cualquier canal de venta.
@@ -135,6 +165,18 @@ Un pedido de cliente por fila, en cualquier canal de venta.
 - `fecha_no_futura`: `fecha_pedido <= current_date()` — Ningún pedido puede estar fechado en el futuro
 
 ## gold
+
+### `dim_cliente`
+
+Una fila por cliente con su ciudad actual; inicialmente tipo 1.
+
+- **Dominio:** crm · **Propietario:** @org/datos-workshop
+- **Clave:** id_cliente · **Si incumple el contrato:** fallar
+
+| Columna | Tipo | Nulos | Valores | Descripción |
+|---|---|---|---|---|
+| `id_cliente` | string | no |  | Identificador CRM customer_id |
+| `ciudad` | string | sí |  | Ciudad declarada en CRM |
 
 ### `fact_ventas_diarias`
 

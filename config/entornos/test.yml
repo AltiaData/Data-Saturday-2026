@@ -1,6 +1,6 @@
 # Entorno test. Los nombres siguen docs/convenciones.md: <proyecto>-<capa funcional>-<entorno>
 nombre: test
-workspace_datos: proyecto-datos-test
+workspace_datos: fsh-alumno99-datos-test
 lakehouses:
   bronze: lh_bronze
   silver: lh_silver

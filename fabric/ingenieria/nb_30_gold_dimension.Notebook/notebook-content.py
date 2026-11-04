@@ -19,7 +19,7 @@
 # PARAMETERS CELL ********************
 
 entorno = "dev"
-workspace_datos = "proyecto-datos-dev"
+workspace_datos = "fsh-alumno99-datos-dev"
 dominio = "<dominio>"
 fuente = "<fuente>"
 modelo = "<modelo>"

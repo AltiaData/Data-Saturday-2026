@@ -21,7 +21,7 @@
 
 # entorno y workspace_datos los sustituye fabric-cicd en cada entorno (ver parameter.yml)
 entorno = "dev"
-workspace_datos = "proyecto-datos-dev"
+workspace_datos = "fsh-alumno99-datos-dev"
 dominio = "ventas"
 fuente = "pedidos"
 batch_id = ""

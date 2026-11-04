@@ -1,0 +1,24 @@
+dominio: crm
+fuentes:
+  clientes_crm:
+    clave_negocio:
+    - id_cliente
+    contrato: contracts/silver/clientes_crm.yml
+    tabla_bronze: clientes_crm
+    tabla_silver: clientes_crm
+    modo_carga: merge
+    extraccion:
+      modo: completa
+      columna_marca: fecha_cambio
+      solape_segundos: 5
+      estabilizacion_segundos: 5
+      borrados: no_detectar
+    formato: csv
+    ruta_landing: landing/crm/clientes_crm/clientes_crm.csv
+    opciones_lectura:
+      header: 'true'
+      inferSchema: 'false'
+      nullValue: \N
+      multiLine: 'true'
+      escape: '"'
+      mode: FAILFAST

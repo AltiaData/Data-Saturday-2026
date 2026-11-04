@@ -1,0 +1,18 @@
+dominio: devoluciones
+fuentes:
+  lineas_devolucion:
+    clave_negocio:
+    - id_linea_devolucion
+    contrato: contracts/silver/lineas_devolucion.yml
+    modo_carga: merge
+    extraccion:
+      modo: completa
+    formato: csv
+    ruta_landing: landing/devoluciones/lineas_devolucion/lineas_devolucion.csv
+    opciones_lectura:
+      header: 'true'
+      inferSchema: 'false'
+      nullValue: \N
+      multiLine: 'true'
+      escape: '"'
+      mode: FAILFAST
