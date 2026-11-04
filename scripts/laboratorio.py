@@ -103,7 +103,8 @@ def publicar_datos(datos):
     from azure.identity import AzureCliCredential
     from azure.storage.filedatalake import DataLakeServiceClient
 
-    workspace = str(uuid.UUID(obligatorio(datos, "WS_DATOS_ID")))
+    # OneLake no admite mezclar el GUID del workspace con el nombre del item: ambos por nombre, como publicar_config.
+    workspace = nombres(datos)["DATOS"]
     raiz = Path(datos.get("DATA_ROOT") or "data")
     entradas = [
         (d, n, raiz / "laboratorio" / f"{n}.csv")

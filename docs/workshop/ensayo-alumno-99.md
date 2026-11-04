@@ -54,13 +54,15 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 4 | Setup | `docs/workshop/01_antes-de-la-sesion.md` | Con cuenta corporativa y personal, Azure CLI seguía en el tenant corporativo | Aviso de `az account show` en la guía; el script lo comprueba | Hecho |
 | 5 | Setup | `infra/` | El Terraform es de proyecto real (dev/test/prod, SP, grupos); no sirve al alumno. Los recursos se creaban a mano | `infra/lab/New-LabResources.ps1` y referencia en la guía | Hecho |
 | 6 | Setup | Tenant | Coexisten una capacidad PPU y una Trial; la PPU no sirve para Fabric | El script descarta `PP*` y elige la única capacidad válida | Hecho |
-| 7 | Setup | Identidades | Portal con `fabric-admin@midatalab.com`, CLI con la cuenta invitada de outlook: los workspaces solo tenían Admin para la cuenta de la CLI y no eran visibles en el portal | Aviso «misma cuenta en portal y CLI» y «sin cuentas personales» en la guía; el script rechaza cuentas `#EXT#`. El rol de administrador de Fabric no da acceso al contenido del workspace | Parcial: `fabric-admin` ya es Admin de los tres workspaces; falta pasar la CLI a esa cuenta |
+| 7 | Setup | Identidades | Portal con `fabric-admin@midatalab.com`, CLI con la cuenta invitada de outlook: los workspaces solo tenían Admin para la cuenta de la CLI y no eran visibles en el portal | Aviso «misma cuenta en portal y CLI» y «sin cuentas personales» en la guía; el script rechaza cuentas `#EXT#`. El rol de administrador de Fabric no da acceso al contenido del workspace | Hecho: `fabric-admin` es Admin de los tres workspaces y la CLI usa esa cuenta |
 | 8 | Setup | `docs/workshop/01_antes-de-la-sesion.md` | El paso 4 decía «selecciona un runtime soportado» sin indicar dónde ni cuál | Ubicación en Environment y workspace, Runtime 1.3 y orden respecto al wheel | Hecho |
 | 9 | Setup | Fabric | Environment y workspace nacen en Runtime 2.0 (Spark 4, ANSI): no validado; riesgo en los casts de la cuarentena | El script fija 1.3 en `env_fwk` (publicado) y en el workspace; aviso en la guía. Validar 2.0 queda para otra edición | Hecho |
 | 10 | Setup | `01_antes-de-la-sesion.md`, `01_preparacion-instructores.md` | Exigían `py -3.12`; el equipo de ensayo solo tenía 3.11 y 3.13 y los comandos siguientes seguían ejecutándose sin venv. `pyproject.toml` admite ≥ 3.10 y Runtime 1.3 usa 3.11 | Python 3.11 o 3.12, `py --list`, comprobación de que existe el venv | Hecho |
 | 11 | Setup | Ídem | pip 22.3 del venv de 3.11: `MemoryError` al cachear `pyspark`; la instalación falla y `verificar` da `No module named 'datafwk'` | `pip install --upgrade pip` antes de instalar | Hecho |
 | 12 | Setup | `01_antes-de-la-sesion.md` | `Copy-Item .env.alumno.example .env.alumno` sobrescribía el dotenv; el aviso venía después del comando | Copia condicionada a que no exista | Hecho |
 | 13 | Setup | `01_antes-de-la-sesion.md` | La instalación tarda unos 7 minutos (descarga de `pyspark`); no se avisaba | Aviso de hacerla antes del evento | Hecho |
+| 14 | Demo 1 | `scripts/laboratorio.py` | `laboratorio datos` falla con `FriendlyNameSupportDisabled`: mezclaba el GUID del workspace con el nombre `lh_bronze.Lakehouse`. `config` funcionaba porque usa nombres | `publicar_datos` usa el nombre del workspace, como `publicar_config` | Hecho |
+| 15 | Demo 1 | `02_seguir-las-demos.md`, `02_plan-sesion-4-horas.md` | Publicar el wheel en `env_fwk` tarda unos 6 minutos (354 s) de los 35 del bloque; el resto de la publicación, menos de 1 minuto | Valorar publicar el wheel en la preparación previa | Pendiente |
 
 ## Registro
 
@@ -86,3 +88,10 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   «Volcado íntegro: hashes, recuentos y documentos JSON correctos».
 - `pre-commit run --files` sobre los ficheros cambiados: todo en verde. `gitleaks` y `check-merge-conflict` se
   ejecutaron sin el bloqueo `WinError 4551` que recoge `03_validacion-edicion.md`; falta repetir `--all-files`.
+
+### 2026-11-04 · Demo 1 (rama `alumno-99/demo-01`)
+
+- Parte local (`crear_proyecto`, `pip install`, `configurar`, `checkpoint base`, `preparar`, `validar_contratos`,
+  `generar_catalogo`) en `C:\src\TRIBUS\fsh-alumno99-lab`: sin errores, 33 s.
+- Publicación: `lakehouses` 24 s, `build` 5 s, `wheel` 354 s (hallazgo 15), `notebooks` 11 s, `config` 15 s.
+  `datos` falló (hallazgo 14); corregido en `setup` y repetido con éxito.
