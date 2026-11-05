@@ -4,7 +4,7 @@ dominio: crm
 propietario: '@org/datos-workshop'
 descripcion: Una fila por cliente con su ciudad actual; inicialmente tipo 1.
 clave:
-- id_cliente
+  - id_cliente
 politica_rechazo: fallar
 columnas:
   id_cliente:

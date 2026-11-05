@@ -2,9 +2,9 @@ tabla: clientes_crm
 capa: silver
 dominio: crm
 propietario: '@org/datos-workshop'
-descripcion: Estado actual de un cliente del CRM observado en la base SQL.
+descripcion: Estado actual de un cliente del CRM observado en el origen.
 clave:
-- id_cliente
+  - id_cliente
 politica_rechazo: cuarentena
 columnas:
   id_cliente:

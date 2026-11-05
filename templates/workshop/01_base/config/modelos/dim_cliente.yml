@@ -3,9 +3,9 @@ dominio: crm
 origen: clientes_crm
 contrato: contracts/gold/dim_cliente.yml
 clave_negocio:
-- id_cliente
+  - id_cliente
 columnas:
-- id_cliente
-- ciudad
+  - id_cliente
+  - ciudad
 historificacion:
   tipo: tipo1

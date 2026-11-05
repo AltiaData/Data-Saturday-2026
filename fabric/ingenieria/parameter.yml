@@ -1,12 +1,12 @@
 find_replace:
-- find_value: entorno = "dev"
-  replace_value:
-    TEST: entorno = "test"
-    PROD: entorno = "prod"
-  item_type: Notebook
-- find_value: fsh-alumno99-datos-dev
-  replace_value:
-    TEST: fsh-alumno99-datos-test
-    PROD: fsh-alumno99-datos-prod
-    DEV: fsh-alumno99-datos-dev
-  item_type: Notebook
+  - find_value: entorno = "dev"
+    replace_value:
+      TEST: entorno = "test"
+      PROD: entorno = "prod"
+    item_type: Notebook
+  - find_value: fsh-alumno99-datos-dev
+    replace_value:
+      TEST: fsh-alumno99-datos-test
+      PROD: fsh-alumno99-datos-prod
+      DEV: fsh-alumno99-datos-dev
+    item_type: Notebook

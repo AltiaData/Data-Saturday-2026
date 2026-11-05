@@ -21,7 +21,7 @@ Un cliente por fila, con su segmento comercial vigente.
 
 ### `clientes_crm`
 
-Estado actual de un cliente del CRM observado en la base SQL.
+Estado actual de un cliente del CRM observado en el origen.
 
 - **Dominio:** crm · **Propietario:** @org/datos-workshop
 - **Clave:** id_cliente · **Si incumple el contrato:** cuarentena
@@ -128,7 +128,7 @@ Estado recuperable de un lote de extracción y publicación silver.
 
 ### `lineas_devolucion`
 
-Una linea devuelta observada en SQL; Q2 exige motivo tambien para filas ya aceptadas.
+Una línea devuelta observada en el origen; Q2 exige motivo también para filas ya aceptadas.
 
 - **Dominio:** devoluciones · **Propietario:** @org/datos-workshop
 - **Clave:** id_linea_devolucion · **Si incumple el contrato:** cuarentena
