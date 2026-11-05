@@ -25,8 +25,8 @@ Los identificadores, IDs de workspace y datos del tenant se guardan solo en `.en
 | `alumno-99/demo-02` | Punto inicial de la demo 2: carga completa CRM y tipo1 | Ensayada |
 | `alumno-99/demo-03` | Punto inicial de la demo 3: errores de origen y cuarentena Q1–Q4 | Ensayada |
 | `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Ensayada |
-| `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Creada |
-| `alumno-99/demo-06` | Punto inicial de la demo 6: consumo y documentos Cosmos | Pendiente |
+| `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Ensayada |
+| `alumno-99/demo-06` | Punto inicial de la demo 6: consumo y documentos Cosmos | Creada |
 | `alumno-99/demo-07` | Punto inicial de la demo 7: revisión del cambio | Pendiente |
 
 Desde `demo-02`, cada rama contiene el proyecto generado (`crear_proyecto.py`) tal como queda al empezar esa
@@ -78,6 +78,9 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 25 | Demo 4 | `02_seguir-las-demos.md` | La guía no decía cómo comprobar ventana, solape ni repetición | Consultas de `fwk_lotes` y `fwk_ejecuciones` con lo esperado (`reutilizado`) | Hecho |
 | 26 | Demo 4 | `data/README.md` | Dice que un reintento «reutiliza bronze y no vuelve a leer el CSV», pero la auditoría de la repetición de `crm-inc-1` registra bronze `ok` con 1 fila leída (sin duplicar); solo silver y gold aparecen `reutilizado` | Revisar la frase con el comportamiento real del framework | Pendiente |
 | 27 | Demo 4 | `02_plan-sesion-4-horas.md` | Demo 4: 9 ejecuciones, 3 con reintento por 430; unos 25 min de cómputo de los 30 del bloque (amplía el hallazgo 19) | Consolidar con el plan | Pendiente |
+| 28 | Demo 5 | `02_seguir-las-demos.md` | Mejora de contenido: la guía no pedía revisar el diff del checkpoint SCD2, que es la pieza que explica el cambio de grano (clave `id_cliente` → `id_version`) y su impacto en consumidores | `git diff` de contratos gold y modelo, con tres puntos de lectura | Hecho |
+| 29 | Demo 5 | `templates/workshop/05_scd2/contracts/gold/dim_cliente.yml` | Descripciones de columnas sin tildes («version», «observacion», «unica») | Corregidas (solo `descripcion`) | Hecho |
+| 30 | Demo 5 | `02_plan-sesion-4-horas.md` | Demo 5: 13 ejecuciones (5 reintentos por 430), unos 45 min de cómputo para un bloque de 40 | Consolidar con el plan: es el bloque que más excede | Pendiente |
 
 ## Registro
 
@@ -148,3 +151,13 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   marca sin cambios (hallazgo 26 sobre la redacción de `data/README.md`).
 - `crm-inc-2` sin cambios (tras 12 s; dos reintentos por 430): 0 filas en bronze y silver; silver 100; marca avanzada.
 - Creada `alumno-99/demo-05` con CRM en incremental.
+
+### 2026-11-05 · Demo 5 (rama `alumno-99/demo-05`)
+
+- `checkpoint scd2`: cambian modelo y contrato `dim_cliente`; nuevo contrato `dim_cliente_actual`; 19 YAML publicados.
+- `crm-activar`: bronze 108 s, silver 108 s, activación 264 s (un 430) y repetida 108 s. 100 versiones, 100 actuales,
+  `C0001` en Barcelona; la repetición no crea versiones; `fwk_modelos` registra la migración.
+- Valencia + `crm-scd2-b` (108, 123, 168 s) y repetición (dos 430): Barcelona cerrada y Valencia vigente, sin duplicar.
+- Barcelona + `crm-scd2-a` (un 430): `C0001` con tres versiones contiguas e identificadores distintos; 102 históricas,
+  100 en `dim_cliente_actual`; ningún cliente con más de una vigente. Coincide con la guía.
+- Creada `alumno-99/demo-06`.
