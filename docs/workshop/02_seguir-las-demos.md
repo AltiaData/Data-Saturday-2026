@@ -181,6 +181,14 @@ Ejecuta bronze → silver → gold CRM con `batch_id="crm-inc-1"`.
 Esperado: una fila dentro de la ventana; silver/gold mantienen 100 clientes; C0001 pasa a Barcelona sin historia tipo1.
 Repite el mismo lote: no duplica datos ni cambia la marca. Espera al menos 11 segundos y ejecuta otro lote
 `crm-inc-2` sin modificar CSV: se esperan cero filas extraídas y silver conserva 100; el límite puede avanzar.
+Compruébalo en el endpoint de `lh_silver`: `fwk_lotes` muestra cada ventana (`desde` empieza cinco segundos antes del
+`hasta` anterior) y `fwk_ejecuciones` la repetición de `crm-inc-1` con silver y gold en estado `reutilizado`:
+
+```sql
+SELECT batch_id, estado, modo, desde, hasta FROM dbo.fwk_lotes WHERE fuente = 'crm.clientes_crm' ORDER BY observado_en;
+SELECT batch_id, capa, filas_leidas, filas_escritas, estado FROM dbo.fwk_ejecuciones
+WHERE batch_id LIKE 'crm-inc%' ORDER BY inicio;
+```
 Si el reloj local está adelantado respecto a Fabric, corrígelo: una marca futura quedará fuera hasta que llegue su ventana.
 
 No se detectan borrados físicos ni ciudades intermedias que cambien dos veces entre lecturas. Devoluciones permanece
