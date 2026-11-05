@@ -2,7 +2,7 @@ dominio: crm
 fuentes:
   clientes_crm:
     clave_negocio:
-    - id_cliente
+      - id_cliente
     contrato: contracts/silver/clientes_crm.yml
     tabla_bronze: clientes_crm
     tabla_silver: clientes_crm

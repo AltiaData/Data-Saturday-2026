@@ -2,9 +2,9 @@ tabla: dim_cliente
 capa: gold
 dominio: crm
 propietario: '@org/datos-workshop'
-descripcion: Versiones observadas de ciudad desde la activacion SCD2; no reconstruye historia anterior.
+descripcion: Versiones observadas de ciudad desde la activación SCD2; no reconstruye historia anterior.
 clave:
-- id_version
+  - id_version
 politica_rechazo: fallar
 columnas:
   id_cliente:
@@ -42,4 +42,4 @@ columnas:
 reglas: []
 version: 2
 clave_negocio:
-- id_cliente
+  - id_cliente
