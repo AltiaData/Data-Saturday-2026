@@ -177,12 +177,12 @@ Versiones observadas de ciudad desde la activación SCD2; no reconstruye histori
 |---|---|---|---|---|
 | `id_cliente` | string | no |  | Identificador CRM customer_id |
 | `ciudad` | string | sí |  | Ciudad declarada en CRM |
-| `id_version` | string | no |  | Identificador determinista de la version observada |
-| `vigente_desde` | timestamp | no |  | Inicio incluido de vigencia por observacion UTC |
-| `vigente_hasta` | timestamp | sí |  | Fin excluido; NULL identifica la version actual |
-| `es_actual` | boolean | no |  | Indica la unica version vigente por cliente |
+| `id_version` | string | no |  | Identificador determinista de la versión observada |
+| `vigente_desde` | timestamp | no |  | Inicio incluido de vigencia por observación UTC |
+| `vigente_hasta` | timestamp | sí |  | Fin excluido; NULL identifica la versión actual |
+| `es_actual` | boolean | no |  | Indica la única versión vigente por cliente |
 | `_hash_scd2` | string | no |  | Hash null-safe de los atributos historificados |
-| `_batch_id` | string | no |  | Lote de apertura de la version |
+| `_batch_id` | string | no |  | Lote de apertura de la versión |
 
 ### `dim_cliente_actual`
 
