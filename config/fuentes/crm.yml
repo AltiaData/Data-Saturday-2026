@@ -8,7 +8,7 @@ fuentes:
     tabla_silver: clientes_crm
     modo_carga: merge
     extraccion:
-      modo: completa
+      modo: incremental
       columna_marca: fecha_cambio
       solape_segundos: 5
       estabilizacion_segundos: 5
