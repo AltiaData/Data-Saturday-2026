@@ -8,4 +8,10 @@ columnas:
   - id_cliente
   - ciudad
 historificacion:
-  tipo: tipo1
+  tipo: scd2
+  columnas:
+    - ciudad
+  columnas_tipo1: []
+  vigencia: observacion
+tabla_actual: dim_cliente_actual
+contrato_actual: contracts/gold/dim_cliente_actual.yml

@@ -168,7 +168,25 @@ Un pedido de cliente por fila, en cualquier canal de venta.
 
 ### `dim_cliente`
 
-Una fila por cliente con su ciudad actual; inicialmente tipo 1.
+Versiones observadas de ciudad desde la activación SCD2; no reconstruye historia anterior.
+
+- **Dominio:** crm · **Propietario:** @org/datos-workshop
+- **Clave:** id_version · **Si incumple el contrato:** fallar
+
+| Columna | Tipo | Nulos | Valores | Descripción |
+|---|---|---|---|---|
+| `id_cliente` | string | no |  | Identificador CRM customer_id |
+| `ciudad` | string | sí |  | Ciudad declarada en CRM |
+| `id_version` | string | no |  | Identificador determinista de la version observada |
+| `vigente_desde` | timestamp | no |  | Inicio incluido de vigencia por observacion UTC |
+| `vigente_hasta` | timestamp | sí |  | Fin excluido; NULL identifica la version actual |
+| `es_actual` | boolean | no |  | Indica la unica version vigente por cliente |
+| `_hash_scd2` | string | no |  | Hash null-safe de los atributos historificados |
+| `_batch_id` | string | no |  | Lote de apertura de la version |
+
+### `dim_cliente_actual`
+
+Una fila por cliente con su ciudad vigente para relaciones de consumo.
 
 - **Dominio:** crm · **Propietario:** @org/datos-workshop
 - **Clave:** id_cliente · **Si incumple el contrato:** fallar
