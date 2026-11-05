@@ -297,8 +297,11 @@ git check-ignore .env.alumno data/laboratorio/clientes_crm.csv
 
 Esperado: dotenv y CSV mutables ignorados; contratos Q4/SCD2 y configuración incremental visibles para revisión.
 Para el greenfield aún sin commit, revisa también los ficheros no seguidos (un `git diff` vacío no implica ausencia de cambios).
-Si preparaste Spark local, ejecuta `python -m pytest --delta` y `pre-commit run --all-files`; ante una limitación de
-herramientas local, registra cuál y completa la validación en CI. No silencies reglas para conseguir verde.
+Ejecuta `python -m pytest` y `pre-commit run --all-files`. Sin Java 17, los tests de Spark aparecen como omitidos
+(con Java, añade `--delta`). Sin Terraform y tflint (vienen en el devcontainer), sus tres hooks fallan con
+código 127: es una limitación de herramientas, no del cambio. Regístrala, comprueba que el resto pasa con
+`$env:SKIP='terraform_fmt,terraform_validate,terraform_tflint'; pre-commit run --all-files` y completa la
+validación en CI. No silencies reglas para conseguir verde.
 
 ## 03:55–04:00 · Restauración y cierre
 
