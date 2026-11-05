@@ -26,8 +26,8 @@ Los identificadores, IDs de workspace y datos del tenant se guardan solo en `.en
 | `alumno-99/demo-03` | Punto inicial de la demo 3: errores de origen y cuarentena Q1–Q4 | Ensayada |
 | `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Ensayada |
 | `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Ensayada |
-| `alumno-99/demo-06` | Punto inicial de la demo 6: consumo y documentos Cosmos | Creada |
-| `alumno-99/demo-07` | Punto inicial de la demo 7: revisión del cambio | Pendiente |
+| `alumno-99/demo-06` | Punto inicial de la demo 6: consumo y documentos Cosmos | Ensayada |
+| `alumno-99/demo-07` | Punto inicial de la demo 7: revisión del cambio | Creada |
 
 Desde `demo-02`, cada rama contiene el proyecto generado (`crear_proyecto.py`) tal como queda al empezar esa
 demo. Las correcciones se hacen en `setup` y se fusionan en las ramas de demo.
@@ -81,6 +81,8 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 28 | Demo 5 | `02_seguir-las-demos.md` | Mejora de contenido: la guía no pedía revisar el diff del checkpoint SCD2, que es la pieza que explica el cambio de grano (clave `id_cliente` → `id_version`) y su impacto en consumidores | `git diff` de contratos gold y modelo, con tres puntos de lectura | Hecho |
 | 29 | Demo 5 | `templates/workshop/05_scd2/contracts/gold/dim_cliente.yml` | Descripciones de columnas sin tildes («version», «observacion», «unica») | Corregidas (solo `descripcion`) | Hecho |
 | 30 | Demo 5 | `02_plan-sesion-4-horas.md` | Demo 5: 13 ejecuciones (5 reintentos por 430), unos 45 min de cómputo para un bloque de 40 | Consolidar con el plan: es el bloque que más excede | Pendiente |
+| 31 | Demo 6 | `data/README.md` | El ejemplo de lectura Cosmos reasignaba `documentos` en cada parte: solo quedaban los de la última | Acumula con `extend` e imprime el total (9.050 en `eventos_web`) | Hecho |
+| 32 | Demo 6 | `02_seguir-las-demos.md` | Mejora de contenido: la multiplicación de filas al unir con el histórico solo se explicaba; las devoluciones no tienen `id_cliente` para mostrarla con un hecho | Consulta `dim_cliente_actual` ⨝ `dim_cliente` por `id_cliente` (102 frente a 100) y su corrección con `es_actual` | Hecho |
 
 ## Registro
 
@@ -161,3 +163,10 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 - Barcelona + `crm-scd2-a` (un 430): `C0001` con tres versiones contiguas e identificadores distintos; 102 históricas,
   100 en `dim_cliente_actual`; ningún cliente con más de una vigente. Coincide con la guía.
 - Creada `alumno-99/demo-06`.
+
+### 2026-11-05 · Demo 6 (rama `alumno-99/demo-06`)
+
+- Sin notebooks. `dim_cliente_actual` 100; `dim_cliente` 102; `C0001` 3 filas. Manifiesto con 10 contenedores Cosmos
+  y su `partition_key_paths`. `modificar_csv verificar`: volcado íntegro.
+- Ejemplo de `data/README.md` defectuoso (hallazgo 31); consulta de multiplicación añadida (hallazgo 32).
+- Contrato SCD2 del proyecto actualizado con las descripciones corregidas. Creada `alumno-99/demo-07`.

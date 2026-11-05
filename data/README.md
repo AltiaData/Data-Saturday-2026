@@ -43,9 +43,11 @@ import csv
 import json
 from pathlib import Path
 
+documentos = []
 for parte in sorted(Path("data/original/cosmos/eventos_web").glob("part-*.csv")):
     with parte.open(encoding="utf-8", newline="") as fichero:
-        documentos = [json.loads(fila["documento_json"]) for fila in csv.DictReader(fichero)]
+        documentos.extend(json.loads(fila["documento_json"]) for fila in csv.DictReader(fichero))
+print(len(documentos))  # 9050 en el volcado distribuido
 ```
 
 El recorrido de cuatro horas procesa CRM y devoluciones. No crea tablas silver de Cosmos sin definir antes sus contratos.
