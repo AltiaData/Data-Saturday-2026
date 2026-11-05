@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import pytest
 
 
@@ -17,6 +20,8 @@ def pytest_collection_modifyitems(config, items):
 @pytest.fixture(scope="session")
 def spark(request):
     pyspark = pytest.importorskip("pyspark", reason="instala las dependencias de desarrollo: pip install -e '.[dev]'")
+    if not (os.environ.get("JAVA_HOME") or shutil.which("java")):
+        pytest.skip("Spark local necesita Java 17 (JAVA_HOME o java en el PATH); CI lo ejecuta")
     builder = (
         pyspark.sql.SparkSession.builder.master("local[1]")
         .appName("tests-datafwk")
