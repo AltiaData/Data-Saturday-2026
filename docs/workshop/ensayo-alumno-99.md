@@ -27,7 +27,7 @@ Los identificadores, IDs de workspace y datos del tenant se guardan solo en `.en
 | `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Ensayada |
 | `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Ensayada |
 | `alumno-99/demo-06` | Punto inicial de la demo 6: consumo y documentos Cosmos | Ensayada |
-| `alumno-99/demo-07` | Punto inicial de la demo 7: revisión del cambio | Creada |
+| `alumno-99/demo-07` | Punto inicial de la demo 7: revisión del cambio | Ensayada |
 
 Desde `demo-02`, cada rama contiene el proyecto generado (`crear_proyecto.py`) tal como queda al empezar esa
 demo. Las correcciones se hacen en `setup` y se fusionan en las ramas de demo.
@@ -83,6 +83,10 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 30 | Demo 5 | `02_plan-sesion-4-horas.md` | Demo 5: 13 ejecuciones (5 reintentos por 430), unos 45 min de cómputo para un bloque de 40 | Consolidar con el plan: es el bloque que más excede | Pendiente |
 | 31 | Demo 6 | `data/README.md` | El ejemplo de lectura Cosmos reasignaba `documentos` en cada parte: solo quedaban los de la última | Acumula con `extend` e imprime el total (9.050 en `eventos_web`) | Hecho |
 | 32 | Demo 6 | `02_seguir-las-demos.md` | Mejora de contenido: la multiplicación de filas al unir con el histórico solo se explicaba; las devoluciones no tienen `id_cliente` para mostrarla con un hecho | Consulta `dim_cliente_actual` ⨝ `dim_cliente` por `id_cliente` (102 frente a 100) y su corrección con `es_actual` | Hecho |
+| 33 | Demo 7 | `scripts/generar_catalogo.py` | En Windows escribía CRLF: `git status` marcaba `docs/catalogo.md` modificado sin cambios de contenido, justo cuando la demo pide revisar `git status` | Escritura con LF | Hecho |
+| 34 | Demo 7 | `tests/conftest.py` | Sin Java, `pytest` daba 14 errores (`JAVA_GATEWAY_EXITED`), también en `main` | Los tests de Spark se omiten con motivo si no hay Java; CI no cambia | Hecho |
+| 35 | Demo 7 | `02_seguir-las-demos.md` | Sin Terraform/tflint, sus hooks fallan con código 127 y la guía no decía cómo proceder | Explicación y `SKIP` solo de esos tres hooks, con validación completa en CI | Hecho |
+| 36 | — | `03_validacion-edicion.md` | El pendiente «pre-commit completamente verde» ya se cumple salvo Terraform (sin `WinError 4551`) | Actualizar el documento de validación al consolidar | Pendiente |
 
 ## Registro
 
@@ -170,3 +174,17 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   y su `partition_key_paths`. `modificar_csv verificar`: volcado íntegro.
 - Ejemplo de `data/README.md` defectuoso (hallazgo 31); consulta de multiplicación añadida (hallazgo 32).
 - Contrato SCD2 del proyecto actualizado con las descripciones corregidas. Creada `alumno-99/demo-07`.
+
+### 2026-11-05 · Demo 7 (rama `alumno-99/demo-07`)
+
+- `generar_catalogo`, `validar_contratos` y `agente_lint` correctos; `.env.alumno` y `data/laboratorio` ignorados.
+- `docs/catalogo.md` aparecía modificado solo por CRLF (hallazgo 33).
+- `pytest`: 14 errores por falta de Java (hallazgo 34); tras la corrección, 73 correctos y 17 omitidos.
+- `pre-commit run --all-files`: todo en verde salvo los hooks de Terraform, no instalado (hallazgo 35).
+
+## Resumen del ensayo
+
+Las siete demos reproducen en Fabric los resultados que promete la guía (100 clientes; Q1 387/10, Q2 358/39, Q3 fallo
+con lote en `revalidacion`, Q4 recuperado; incremental de una fila y ventana vacía; SCD2 con 102 versiones y 100
+vigentes). Quedan pendientes de consolidar los hallazgos 1, 3, 15, 19, 26, 27, 30 y 36: material del instructor,
+README de `templates/workshop` y, sobre todo, los tiempos del plan con capacidades pequeñas.

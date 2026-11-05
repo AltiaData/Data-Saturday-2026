@@ -64,5 +64,5 @@ if __name__ == "__main__":
             sys.exit(1)
         print("Catálogo al día")
     else:
-        DESTINO.write_text(contenido, encoding="utf-8")
+        DESTINO.write_text(contenido, encoding="utf-8", newline="\n")  # LF también en Windows
         print(f"Catálogo generado en {DESTINO.relative_to(RAIZ)}")
