@@ -69,7 +69,7 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 16 | Demo 1 | `.env.alumno.example`, `.env.instructor.example`, `01_antes-de-la-sesion.md`, `02_seguir-las-demos.md` | `LAKEHOUSE_ESQUEMA=dbo` por defecto, pero los lakehouses que publica el repo no tienen esquemas (`lakehouse.metadata.json` vacío; API: `defaultSchema` vacío). Las tablas irían a `Tables/dbo/` y no aparecerían en el SQL endpoint | Valor por defecto vacío y explicación en las guías; proyecto generado reconfigurado y `config` publicado de nuevo | Hecho |
 | 17 | Demo 2 | `02_seguir-las-demos.md`, `01_antes-de-la-sesion.md` | Trial FTL4: cada notebook lanzado justo después de otro falla con `TooManyRequestsForCapacity` (430); entra al reintentar 60 s después. En el portal la sesión interactiva sigue viva tras ejecutar, así que el siguiente notebook fallará siempre | Instrucción «una sesión cada vez: Stop session» y aviso del SKU en la preparación | Hecho |
 | 18 | Demo 2 | `02_seguir-las-demos.md` | Los SQL endpoints no mostraban ninguna tabla minutos después de cargar; aparecieron al forzar la sincronización de metadatos | Instrucción concreta: botón Refresh del SQL analytics endpoint | Hecho |
-| 19 | Demo 2 | `02_plan-sesion-4-horas.md` | Cada notebook tarda 90–115 s (arranque en frío) y más con reintentos: la demo 2 son 6 ejecuciones (unos 12–20 min de sus 25) | Revisar tiempos del plan al terminar el ensayo | Pendiente |
+| 19 | Demo 2 | `02_plan-sesion-4-horas.md` | Cada notebook tarda 90–115 s (arranque en frío) y más con reintentos: la demo 2 son 6 ejecuciones (unos 12–20 min de sus 25) | Revisar tiempos del plan al terminar el ensayo | Tiempos documentados; recorte pendiente de decisión |
 | 20 | Demo 3 | `02_seguir-las-demos.md` | La cuarentena guarda el lote de observación (`dev-q1`), no el de revalidación: filtrar por `dev-q2` devuelve cero | Consulta por `batch_id` y `version_contrato` con el resultado esperado | Hecho |
 | 21 | Demo 3 | `02_seguir-las-demos.md` | Q3 hablaba de «lote pendiente», pero el estado real es `revalidacion`; la API de jobs solo da un error genérico y el mensaje de contrato está en la salida del notebook | Estado, mensaje y tablas de auditoría explícitos | Hecho |
 | 22 | Demo 3 | `02_seguir-las-demos.md` | Los pasos Q3 y Q4 no validaban contratos ni regeneraban el catálogo: el hook `catalogo-actualizado` falla | `validar_contratos` y `generar_catalogo` en ambos pasos | Hecho |
@@ -77,10 +77,10 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 24 | Demo 3 | `templates/workshop/*/contracts` | Descripciones «observada en SQL» en la edición CSV, sin tildes, y Q3 con el texto de Q2 | Texto corregido (solo `descripcion`; sin cambio de contrato para consumidores) | Hecho |
 | 25 | Demo 4 | `02_seguir-las-demos.md` | La guía no decía cómo comprobar ventana, solape ni repetición | Consultas de `fwk_lotes` y `fwk_ejecuciones` con lo esperado (`reutilizado`) | Hecho |
 | 26 | Demo 4 | `data/README.md` | Dice que un reintento «reutiliza bronze y no vuelve a leer el CSV», pero la auditoría de la repetición de `crm-inc-1` registra bronze `ok` con 1 fila leída (sin duplicar); solo silver y gold aparecen `reutilizado` | Revisar la frase con el comportamiento real del framework | Pendiente |
-| 27 | Demo 4 | `02_plan-sesion-4-horas.md` | Demo 4: 9 ejecuciones, 3 con reintento por 430; unos 25 min de cómputo de los 30 del bloque (amplía el hallazgo 19) | Consolidar con el plan | Pendiente |
+| 27 | Demo 4 | `02_plan-sesion-4-horas.md` | Demo 4: 9 ejecuciones, 3 con reintento por 430; unos 25 min de cómputo de los 30 del bloque (amplía el hallazgo 19) | Consolidar con el plan | Tiempos documentados; recorte pendiente de decisión |
 | 28 | Demo 5 | `02_seguir-las-demos.md` | Mejora de contenido: la guía no pedía revisar el diff del checkpoint SCD2, que es la pieza que explica el cambio de grano (clave `id_cliente` → `id_version`) y su impacto en consumidores | `git diff` de contratos gold y modelo, con tres puntos de lectura | Hecho |
 | 29 | Demo 5 | `templates/workshop/05_scd2/contracts/gold/dim_cliente.yml` | Descripciones de columnas sin tildes («version», «observacion», «unica») | Corregidas (solo `descripcion`) | Hecho |
-| 30 | Demo 5 | `02_plan-sesion-4-horas.md` | Demo 5: 13 ejecuciones (5 reintentos por 430), unos 45 min de cómputo para un bloque de 40 | Consolidar con el plan: es el bloque que más excede | Pendiente |
+| 30 | Demo 5 | `02_plan-sesion-4-horas.md` | Demo 5: 13 ejecuciones (5 reintentos por 430), unos 35 min de cómputo para un bloque de 40 | Consolidar con el plan: es el bloque que más excede | Tiempos documentados; recorte pendiente de decisión |
 | 31 | Demo 6 | `data/README.md` | El ejemplo de lectura Cosmos reasignaba `documentos` en cada parte: solo quedaban los de la última | Acumula con `extend` e imprime el total (9.050 en `eventos_web`) | Hecho |
 | 32 | Demo 6 | `02_seguir-las-demos.md` | Mejora de contenido: la multiplicación de filas al unir con el histórico solo se explicaba; las devoluciones no tienen `id_cliente` para mostrarla con un hecho | Consulta `dim_cliente_actual` ⨝ `dim_cliente` por `id_cliente` (102 frente a 100) y su corrección con `es_actual` | Hecho |
 | 33 | Demo 7 | `scripts/generar_catalogo.py` | En Windows escribía CRLF: `git status` marcaba `docs/catalogo.md` modificado sin cambios de contenido, justo cuando la demo pide revisar `git status` | Escritura con LF | Hecho |
@@ -188,3 +188,8 @@ Las siete demos reproducen en Fabric los resultados que promete la guía (100 cl
 con lote en `revalidacion`, Q4 recuperado; incremental de una fila y ventana vacía; SCD2 con 102 versiones y 100
 vigentes). Quedan pendientes de consolidar los hallazgos 1, 3, 15, 19, 26, 27, 30 y 36: material del instructor,
 README de `templates/workshop` y, sobre todo, los tiempos del plan con capacidades pequeñas.
+
+### 2026-11-05 · Tiempos
+
+- Tiempos medidos añadidos a cada demo de `02_seguir-las-demos.md` y tabla comparativa en `02_plan-sesion-4-horas.md`,
+  con el entorno del ensayo (Trial FTL4, West Europe, Runtime 1.3). La restauración no se ha ensayado.
