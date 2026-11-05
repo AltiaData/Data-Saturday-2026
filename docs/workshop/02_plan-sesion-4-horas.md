@@ -28,3 +28,23 @@ No atribuyas al framework recuperación de historia previa, detección de borrad
 
 El recorrido SQL conectado de `docs/runbooks/workshop-evolutivo.md` sigue siendo una referencia técnica alternativa
 para el instructor; no es la preparación ni el guion entregado a alumnos.
+
+## Tiempos medidos en el ensayo
+
+Ensayo del 4 y 5 de noviembre de 2026 con capacidad Trial FTL4 (West Europe), Runtime 1.3 (Spark 3.5), Environment `env_fwk` con `datafwk` 0.3.0 y una sola sesión de Spark cada vez. «Ejecución» es el tiempo de notebooks y publicación, sin
+explicación ni lectura de resultados.
+
+| Bloque | Duración en el plan | Ejecución medida | Margen para explicar |
+|---|---:|---|---|
+| Demo 1 · greenfield | 35 | ~7 min de publicación (6 del wheel) + vinculación de notebooks | Holgado si la preparación está hecha |
+| Demo 2 · completa y tipo1 | 25 | 6 notebooks, ~16 min | Justo |
+| Demo 3 · calidad Q1–Q4 | 40 | 6 notebooks, ~11 min | Holgado |
+| Demo 4 · incremental | 30 | 9 notebooks, ~22 min | Justo |
+| Demo 5 · SCD2 | 40 | 13 notebooks, ~35 min | Insuficiente |
+| Demo 6 · consumo y Cosmos | 20 | Consultas, ~5 min | Holgado |
+| Demo 7 · revisión | 15 | `pytest` 20 s; `pre-commit` varios minutos la primera vez | Holgado si los hooks ya están instalados |
+| Restauración | 5 | No ensayada; ~6 notebooks, 12–15 min | Insuficiente |
+
+Con una capacidad pequeña, las demos 2, 4 y 5 y la restauración no dejan margen. Opciones: publicar el wheel en la
+preparación previa, prescindir de las repeticiones de idempotencia (comentarlas sin ejecutarlas), lanzar los notebooks
+mientras se explica la teoría o exigir una capacidad mayor que admita sesiones simultáneas.

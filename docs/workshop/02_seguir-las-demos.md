@@ -3,6 +3,10 @@
 Trabaja desde PowerShell en la raíz del proyecto generado, salvo el primer bloque. Conserva `$Python`, `$Plantilla`
 y el fichero `.env.alumno` de la [preparación](01_antes-de-la-sesion.md). Cada persona utiliza sus propios recursos.
 
+Tiempos de referencia: ensayo completo del 4 y 5 de noviembre de 2026 con capacidad Trial FTL4 (West Europe), Runtime 1.3 (Spark 3.5), Environment `env_fwk` con `datafwk` 0.3.0 y una sola sesión de Spark cada vez. Cada notebook tarda
+entre 90 y 135 s, casi todo en arrancar la sesión, y unos 60 s más si la capacidad responde 430. Con capacidades
+mayores las ejecuciones pueden solaparse y los tiempos bajan.
+
 ## 00:00–00:15 · Arquitectura y reglas
 
 Teoría: un workspace por responsabilidad; bronze conserva observaciones, silver aplica contrato y gold modela consumo.
@@ -14,6 +18,8 @@ Datos: el volcado real del 2 de noviembre de 2026 contiene 49 tablas SQL (41.454
 Cosmos queda disponible en su totalidad para reproducción y ampliaciones. Las exclusiones están en `data/README.md`.
 
 ## 00:15–00:50 · Demo 1: generar un proyecto greenfield
+
+> **Tiempo medido en el ensayo:** parte local 33 s; publicación unos 7 min, de ellos 6 min el wheel en `env_fwk`; más la vinculación manual de los cinco notebooks.
 
 Teoría: crear un producto independiente exige nuevos identificadores de items, configuración propia y secretos locales.
 El generador no copia `.git`, entornos virtuales, credenciales ni CSV ya mutados.
@@ -87,6 +93,8 @@ SQL analytics endpoint antes de interpretarlo como fallo. En el ensayo, sin refr
 
 ## 00:50–01:15 · Demo 2: carga completa y dimensión tipo1
 
+> **Tiempo medido en el ensayo:** 6 ejecuciones de notebook, unos 16 min (dos reintentos por 430).
+
 Teoría: clave de negocio, tipos contractuales, diferencia entre observación y actualización de origen,
 baseline que establece una marca confirmada. `merge` evita duplicar claves; bronze conserva cada lote.
 
@@ -99,6 +107,8 @@ baseline que establece una marca confirmada. `merge` evita duplicar claves; bron
 No cargues devoluciones todavía: la siguiente demo siembra los defectos antes de su primer lote.
 
 ## 01:15–01:55 · Demo 3: errores de origen y evolución de cuarentena
+
+> **Tiempo medido en el ensayo:** 6 ejecuciones, unos 11 min.
 
 Teoría: dato inválido versus regla que cambia, evidencia por versión, revalidación de datos ya aceptados,
 política cuarentena frente a fallar y recuperación de lote pendiente. Reglas ya pactadas en los contratos:
@@ -164,6 +174,8 @@ debe confirmar, con 358 válidas y 39 rechazos. El cambio de contrato es explíc
 
 ## 02:10–02:40 · Demo 4: completa → incremental
 
+> **Tiempo medido en el ensayo:** 9 ejecuciones, unos 22 min (tres reintentos por 430).
+
 Teoría: marca confirmada, límite superior fijo, estabilización y solape de cinco segundos; extracción y escritura
 son decisiones independientes. En CSV se lee el fichero completo y se filtra: no es pushdown, CDC ni ahorro de I/O.
 
@@ -195,6 +207,8 @@ No se detectan borrados físicos ni ciudades intermedias que cambien dos veces e
 en completa porque no dispone de una marca de modificación fiable.
 
 ## 02:40–03:20 · Demo 5: añadir SCD2 a ciudad, que antes era tipo1
+
+> **Tiempo medido en el ensayo:** 13 ejecuciones, unos 35 min (cinco reintentos por 430).
 
 Teoría: historia por observación UTC, nueva clave por versión, intervalos `[desde,hasta)`, proyección vigente y cambio
 de grano para consumidores. No reconstruir Sevilla anterior a la activación como si se hubiera observado bajo SCD2.
@@ -263,6 +277,8 @@ cambiar su lista de atributos históricos requiere otra migración.
 
 ## 03:20–03:40 · Demo 6: consumo y documentos Cosmos
 
+> **Tiempo medido en el ensayo:** sin notebooks; unos 5 min de consultas y comprobaciones locales.
+
 Teoría: una dimensión vigente se relaciona por `id_cliente`; relacionar hechos directamente con el histórico por esa
 clave puede multiplicar filas. Una unión temporal necesita fecha del hecho y definición de negocio acordada.
 
@@ -285,6 +301,8 @@ clave puede multiplicar filas. Una unión temporal necesita fecha del hecho y de
 
 ## 03:40–03:55 · Demo 7: revisión del cambio
 
+> **Tiempo medido en el ensayo:** `pytest` 20 s; `pre-commit run --all-files` varios minutos la primera vez (instala los entornos de los hooks).
+
 Teoría: el contrato es una API; la evidencia para aprobar un cambio incluye reglas, catálogo, pruebas y operación.
 
 ```powershell
@@ -304,6 +322,8 @@ código 127: es una limitación de herramientas, no del cambio. Regístrala, com
 validación en CI. No silencies reglas para conseguir verde.
 
 ## 03:55–04:00 · Restauración y cierre
+
+> **Tiempo medido en el ensayo:** no ensayada; estimación de 6 ejecuciones, unos 12–15 min: no cabe en 5 min.
 
 ```powershell
 & $Python -m scripts.modificar_csv restaurar
