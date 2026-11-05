@@ -206,8 +206,20 @@ de grano para consumidores. No reconstruir Sevilla anterior a la activación com
 & $Python -m scripts.laboratorio config --env-file .env.alumno
 ```
 
-El comando copia primero los dos contratos gold y después el modelo. `dim_cliente` pasa a clave `id_version`,
-atributo histórico `ciudad`; `dim_cliente_actual` mantiene una fila por `id_cliente` para consumidores.
+El comando copia primero los dos contratos gold y después el modelo. Revisa el cambio antes de activar:
+
+```powershell
+git diff -- contracts/gold config/modelos
+git status --short contracts/gold
+```
+
+- `dim_cliente` cambia de grano: la clave pasa de `id_cliente` a `id_version` y aparecen `vigente_desde`,
+  `vigente_hasta`, `es_actual`, `_hash_scd2` y `_batch_id`. Quien relacione hechos por `id_cliente` contra esta tabla
+  multiplicará filas en cuanto un cliente tenga dos versiones: es un cambio para consumidores.
+- `config/modelos/dim_cliente.yml` pasa de `tipo: tipo1` a `tipo: scd2` sobre `ciudad`, con `vigencia: observacion`:
+  la historia empieza en la activación.
+- `dim_cliente_actual` es un contrato nuevo (fichero no seguido): una fila por `id_cliente`, la proyección vigente
+  para consumidores.
 
 1. Sin mutaciones, ejecuta bronze → silver CRM con **nuevo** `batch_id="crm-activar"`.
 2. Para ese lote ejecuta `nb_90_ops_activar_scd2` en lugar del notebook gold ordinario.
