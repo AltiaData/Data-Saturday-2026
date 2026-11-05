@@ -268,6 +268,16 @@ clave puede multiplicar filas. Una unión temporal necesita fecha del hecho y de
 
 1. En el endpoint gold consulta `SELECT COUNT(*) FROM dbo.dim_cliente_actual;`: esperado 100.
 2. Compara con las 102 versiones históricas y las tres filas de C0001. No crear KPIs no definidos.
+   Para ver la multiplicación sin una tabla de hechos, relaciona por `id_cliente` la proyección vigente con el
+   histórico: devuelve 102 filas en lugar de 100, y `C0001` aparece tres veces. Es lo que le pasaría a un hecho.
+
+   ```sql
+   SELECT COUNT(*) AS filas
+   FROM dbo.dim_cliente_actual AS a
+   INNER JOIN dbo.dim_cliente AS h ON a.id_cliente = h.id_cliente;
+   ```
+
+   Con `AND h.es_actual = 1` en la condición vuelven a ser 100.
 3. Abre `data/original/manifest.json`: revisa los diez contenedores Cosmos y sus claves de partición.
 4. Abre una parte CSV con un lector CSV o ejecuta el ejemplo de `data/README.md`: `documento_json` se deserializa
    sin perder arrays, objetos ni IDs. Ejecuta `python -m scripts.modificar_csv verificar`: todas las partes deben pasar.
