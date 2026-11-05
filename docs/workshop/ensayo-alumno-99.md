@@ -24,8 +24,8 @@ Los identificadores, IDs de workspace y datos del tenant se guardan solo en `.en
 | `alumno-99/demo-01` | Punto inicial de la demo 1: proyecto greenfield | Ensayada |
 | `alumno-99/demo-02` | Punto inicial de la demo 2: carga completa CRM y tipo1 | Ensayada |
 | `alumno-99/demo-03` | Punto inicial de la demo 3: errores de origen y cuarentena Q1–Q4 | Ensayada |
-| `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Creada |
-| `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Pendiente |
+| `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Ensayada |
+| `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Creada |
 | `alumno-99/demo-06` | Punto inicial de la demo 6: consumo y documentos Cosmos | Pendiente |
 | `alumno-99/demo-07` | Punto inicial de la demo 7: revisión del cambio | Pendiente |
 
@@ -75,6 +75,9 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 22 | Demo 3 | `02_seguir-las-demos.md` | Los pasos Q3 y Q4 no validaban contratos ni regeneraban el catálogo: el hook `catalogo-actualizado` falla | `validar_contratos` y `generar_catalogo` en ambos pasos | Hecho |
 | 23 | Demo 1–3 | `scripts/laboratorio.py`, `templates/workshop/` | Todo YAML generado incumplía `yamllint`: plantillas con listas sin sangrar y `yaml.safe_dump` sin sangría (y CRLF en `recuperar`). `pre-commit --all-files` de la demo 7 fallaría | `escribir_yaml` (listas sangradas, LF, ancho 120) en todas las escrituras; plantillas reformateadas; test que aplica todos los checkpoints y pasa `yamllint` | Hecho |
 | 24 | Demo 3 | `templates/workshop/*/contracts` | Descripciones «observada en SQL» en la edición CSV, sin tildes, y Q3 con el texto de Q2 | Texto corregido (solo `descripcion`; sin cambio de contrato para consumidores) | Hecho |
+| 25 | Demo 4 | `02_seguir-las-demos.md` | La guía no decía cómo comprobar ventana, solape ni repetición | Consultas de `fwk_lotes` y `fwk_ejecuciones` con lo esperado (`reutilizado`) | Hecho |
+| 26 | Demo 4 | `data/README.md` | Dice que un reintento «reutiliza bronze y no vuelve a leer el CSV», pero la auditoría de la repetición de `crm-inc-1` registra bronze `ok` con 1 fila leída (sin duplicar); solo silver y gold aparecen `reutilizado` | Revisar la frase con el comportamiento real del framework | Pendiente |
+| 27 | Demo 4 | `02_plan-sesion-4-horas.md` | Demo 4: 9 ejecuciones, 3 con reintento por 430; unos 25 min de cómputo de los 30 del bloque (amplía el hallazgo 19) | Consolidar con el plan | Pendiente |
 
 ## Registro
 
@@ -135,3 +138,13 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   incumplen el contrato; no se publica» (hallazgo 21).
 - Q4 (`dev-q3` repetido, 115 s): confirmado con contrato v4; 358 válidas y 39 rechazos v4. Coincide con la guía.
 - Al guardar `demo-04`, `yamllint` falló sobre el contrato generado (hallazgo 23); corregido en `setup`.
+
+### 2026-11-05 · Demo 4 (rama `alumno-99/demo-04`)
+
+- `checkpoint incremental`: diff de una línea en `config/fuentes/crm.yml` (el formato YAML se conserva).
+- `crm-inc-1` (110 s, 227 s con un 430, 110 s): ventana desde la marca menos 5 s; bronze y silver 1 fila; 100 clientes;
+  `C0001` en Barcelona; marca avanzada.
+- Repetición de `crm-inc-1` (unos 92 s cada notebook): bronze sigue con 1 fila del lote; silver y gold `reutilizado`;
+  marca sin cambios (hallazgo 26 sobre la redacción de `data/README.md`).
+- `crm-inc-2` sin cambios (tras 12 s; dos reintentos por 430): 0 filas en bronze y silver; silver 100; marca avanzada.
+- Creada `alumno-99/demo-05` con CRM en incremental.
