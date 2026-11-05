@@ -128,7 +128,7 @@ Estado recuperable de un lote de extracción y publicación silver.
 
 ### `lineas_devolucion`
 
-Una linea devuelta observada en SQL; contrato docente Q1 del workshop.
+Una linea devuelta observada en SQL; Q2 exige motivo tambien para filas ya aceptadas.
 
 - **Dominio:** devoluciones · **Propietario:** @org/datos-workshop
 - **Clave:** id_linea_devolucion · **Si incumple el contrato:** cuarentena
@@ -137,7 +137,7 @@ Una linea devuelta observada en SQL; contrato docente Q1 del workshop.
 |---|---|---|---|---|
 | `id_linea_devolucion` | string | no |  | return_line_id del origen |
 | `importe_reembolso` | decimal(18,2) | no |  | refund_amount del origen; regla docente de no negatividad |
-| `motivo` | string | sí |  | return_reason del origen |
+| `motivo` | string | no |  | Motivo obligatorio en la segunda regla docente |
 
 **Reglas:**
 
