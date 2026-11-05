@@ -3,14 +3,14 @@ dominio: crm
 origen: clientes_crm
 contrato: contracts/gold/dim_cliente.yml
 clave_negocio:
-- id_cliente
+  - id_cliente
 columnas:
-- id_cliente
-- ciudad
+  - id_cliente
+  - ciudad
 historificacion:
   tipo: scd2
   columnas:
-  - ciudad
+    - ciudad
   columnas_tipo1: []
   vigencia: observacion
 tabla_actual: dim_cliente_actual

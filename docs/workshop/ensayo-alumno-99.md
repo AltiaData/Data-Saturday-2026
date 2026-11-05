@@ -23,8 +23,8 @@ Los identificadores, IDs de workspace y datos del tenant se guardan solo en `.en
 | `alumno-99/setup` | Preparación previa (`01_antes-de-la-sesion.md`), correcciones y este diario (versión de referencia) | En curso |
 | `alumno-99/demo-01` | Punto inicial de la demo 1: proyecto greenfield | Ensayada |
 | `alumno-99/demo-02` | Punto inicial de la demo 2: carga completa CRM y tipo1 | Ensayada |
-| `alumno-99/demo-03` | Punto inicial de la demo 3: errores de origen y cuarentena Q1–Q4 | Pendiente |
-| `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Pendiente |
+| `alumno-99/demo-03` | Punto inicial de la demo 3: errores de origen y cuarentena Q1–Q4 | Ensayada |
+| `alumno-99/demo-04` | Punto inicial de la demo 4: completa → incremental | Creada |
 | `alumno-99/demo-05` | Punto inicial de la demo 5: activación SCD2 | Pendiente |
 | `alumno-99/demo-06` | Punto inicial de la demo 6: consumo y documentos Cosmos | Pendiente |
 | `alumno-99/demo-07` | Punto inicial de la demo 7: revisión del cambio | Pendiente |
@@ -70,6 +70,11 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
 | 17 | Demo 2 | `02_seguir-las-demos.md`, `01_antes-de-la-sesion.md` | Trial FTL4: cada notebook lanzado justo después de otro falla con `TooManyRequestsForCapacity` (430); entra al reintentar 60 s después. En el portal la sesión interactiva sigue viva tras ejecutar, así que el siguiente notebook fallará siempre | Instrucción «una sesión cada vez: Stop session» y aviso del SKU en la preparación | Hecho |
 | 18 | Demo 2 | `02_seguir-las-demos.md` | Los SQL endpoints no mostraban ninguna tabla minutos después de cargar; aparecieron al forzar la sincronización de metadatos | Instrucción concreta: botón Refresh del SQL analytics endpoint | Hecho |
 | 19 | Demo 2 | `02_plan-sesion-4-horas.md` | Cada notebook tarda 90–115 s (arranque en frío) y más con reintentos: la demo 2 son 6 ejecuciones (unos 12–20 min de sus 25) | Revisar tiempos del plan al terminar el ensayo | Pendiente |
+| 20 | Demo 3 | `02_seguir-las-demos.md` | La cuarentena guarda el lote de observación (`dev-q1`), no el de revalidación: filtrar por `dev-q2` devuelve cero | Consulta por `batch_id` y `version_contrato` con el resultado esperado | Hecho |
+| 21 | Demo 3 | `02_seguir-las-demos.md` | Q3 hablaba de «lote pendiente», pero el estado real es `revalidacion`; la API de jobs solo da un error genérico y el mensaje de contrato está en la salida del notebook | Estado, mensaje y tablas de auditoría explícitos | Hecho |
+| 22 | Demo 3 | `02_seguir-las-demos.md` | Los pasos Q3 y Q4 no validaban contratos ni regeneraban el catálogo: el hook `catalogo-actualizado` falla | `validar_contratos` y `generar_catalogo` en ambos pasos | Hecho |
+| 23 | Demo 1–3 | `scripts/laboratorio.py`, `templates/workshop/` | Todo YAML generado incumplía `yamllint`: plantillas con listas sin sangrar y `yaml.safe_dump` sin sangría (y CRLF en `recuperar`). `pre-commit --all-files` de la demo 7 fallaría | `escribir_yaml` (listas sangradas, LF, ancho 120) en todas las escrituras; plantillas reformateadas; test que aplica todos los checkpoints y pasa `yamllint` | Hecho |
+| 24 | Demo 3 | `templates/workshop/*/contracts` | Descripciones «observada en SQL» en la edición CSV, sin tildes, y Q3 con el texto de Q2 | Texto corregido (solo `descripcion`; sin cambio de contrato para consumidores) | Hecho |
 
 ## Registro
 
@@ -119,3 +124,14 @@ y el estado en Fabric (tablas Delta, lotes, marcas, historia), que no se version
   `fwk_lotes` con `crm-base` confirmado (completa, contrato v1); marca registrada. Coincide con la guía.
 - Repetición de `crm-base` (bronze 88 s; silver y gold con un reintento por 430): 100 filas y 100 claves en las tres
   capas, un único lote, misma marca; `fwk_ejecuciones` registra 6 ejecuciones. Idempotencia confirmada.
+
+### 2026-11-05 · Demo 3 (rama `alumno-99/demo-03`)
+
+- Desde aquí el ensayo se ejecuta sobre la rama (copia de trabajo del repositorio), no sobre `fsh-alumno99-lab`.
+- `defectos` + `datos`; `dev-q1`: bronze 105 s, silver 121 s. 397 leídas, 387 válidas, 10 a cuarentena (v1).
+- Q2 (`dev-q2`, 123 s): 358 válidas; 39 rechazos v2 con lote `dev-q1` (hallazgo 20). Marca sin cambios.
+  Repetición (87 s): sin evidencia duplicada.
+- Q3 (`dev-q3`, 108 s): falla; silver 358; lote `dev-q3` en `revalidacion`; ejecución `error` con «39 filas
+  incumplen el contrato; no se publica» (hallazgo 21).
+- Q4 (`dev-q3` repetido, 115 s): confirmado con contrato v4; 358 válidas y 39 rechazos v4. Coincide con la guía.
+- Al guardar `demo-04`, `yamllint` falló sobre el contrato generado (hallazgo 23); corregido en `setup`.

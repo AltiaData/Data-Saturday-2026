@@ -86,6 +86,22 @@ def test_checkpoint_csv_cumple_schema_y_evoluciona(tmp_path):
     assert yaml.safe_load((tmp_path / "contracts/silver/lineas_devolucion.yml").read_text())["version"] == 2
 
 
+def test_yaml_generado_por_configurar_y_checkpoints_pasa_yamllint(tmp_path):
+    from yamllint import linter
+    from yamllint.config import YamlLintConfig
+
+    for carpeta in ("templates", "config", "fabric/ingenieria"):
+        shutil.copytree(RAIZ / carpeta, tmp_path / carpeta)
+    configuracion = YamlLintConfig(file=str(RAIZ / ".yamllint.yml"))
+    configurar({"PROYECTO": "fsh-prueba", "ENTORNO": "dev", "LAKEHOUSE_ESQUEMA": ""}, tmp_path)
+    for paso in ("base", "calidad", "fallar", "recuperar", "incremental", "scd2"):
+        checkpoint(paso, tmp_path)
+        for carpeta in ("config", "contracts", "fabric/ingenieria"):
+            for ruta in (tmp_path / carpeta).rglob("*.yml"):
+                errores = list(linter.run(ruta.read_bytes().decode("utf-8"), configuracion))
+                assert not errores, f"{paso}: {ruta.relative_to(tmp_path)} {errores}"
+
+
 def test_generador_incluye_ejemplo_alumno_excluye_privados_y_mutaciones(tmp_path):
     origen = tmp_path / "base"
     origen.mkdir()

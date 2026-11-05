@@ -24,6 +24,20 @@ PASOS = {
 }
 
 
+class _Dumper(yaml.SafeDumper):
+    """Sangra las listas bajo su clave, como exige la regla indentation de yamllint."""
+
+    def increase_indent(self, flow=False, indentless=False):
+        return super().increase_indent(flow, False)
+
+
+def escribir_yaml(ruta, datos):
+    """Escribe YAML que pasa yamllint: listas sangradas, UTF-8 y finales LF también en Windows."""
+    texto = yaml.dump(datos, Dumper=_Dumper, sort_keys=False, allow_unicode=True, width=120)
+    with ruta.open("w", encoding="utf-8", newline="\n") as fichero:
+        fichero.write(texto)
+
+
 def nombres(datos):
     proyecto = obligatorio(datos, "PROYECTO")
     if not re.fullmatch(r"[a-z][a-z0-9-]{2,39}", proyecto):
@@ -46,14 +60,14 @@ def configurar(datos, raiz=RAIZ):
     }
     if datos.get("LAKEHOUSE_ESQUEMA"):
         entorno["esquema"] = datos["LAKEHOUSE_ESQUEMA"]
-    (raiz / "config/entornos/dev.yml").write_text(yaml.safe_dump(entorno, sort_keys=False), encoding="utf-8")
+    escribir_yaml(raiz / "config/entornos/dev.yml", entorno)
     # Sustitución en DEV: conserva la celda literal exigida por AGENTS.md.
     ruta = raiz / "fabric/ingenieria/parameter.yml"
     parametros = yaml.safe_load(ruta.read_text(encoding="utf-8"))
     for item in parametros["find_replace"]:
         if item.get("item_type") == "Notebook" and "datos" in item["find_value"]:
             item["replace_value"]["DEV"] = workspaces["DATOS"]
-    ruta.write_text(yaml.safe_dump(parametros, sort_keys=False), encoding="utf-8")
+    escribir_yaml(ruta, parametros)
     return workspaces
 
 
@@ -62,7 +76,7 @@ def checkpoint(paso, raiz=RAIZ):
         ruta = raiz / "config/fuentes/crm.yml"
         datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
         datos["fuentes"]["clientes_crm"]["extraccion"]["modo"] = "incremental"
-        ruta.write_text(yaml.safe_dump(datos, sort_keys=False), encoding="utf-8")
+        escribir_yaml(ruta, datos)
         return
     origen = raiz / "templates/workshop" / PASOS[paso]
     # Primero contratos; después configuración que los referencia.
@@ -75,7 +89,7 @@ def checkpoint(paso, raiz=RAIZ):
         ruta = raiz / "contracts/silver/lineas_devolucion.yml"
         datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
         datos["version"] = 4
-        ruta.write_text(yaml.safe_dump(datos, sort_keys=False, allow_unicode=True), encoding="utf-8")
+        escribir_yaml(ruta, datos)
     if paso == "base":
         for dominio in ("crm", "devoluciones"):
             ruta = raiz / f"config/fuentes/{dominio}.yml"
@@ -96,7 +110,7 @@ def checkpoint(paso, raiz=RAIZ):
                 )
                 if dominio == "crm":
                     fuente["extraccion"]["columna_marca"] = "fecha_cambio"
-            ruta.write_text(yaml.safe_dump(datos, sort_keys=False), encoding="utf-8")
+            escribir_yaml(ruta, datos)
 
 
 def publicar_datos(datos):

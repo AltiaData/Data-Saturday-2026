@@ -2,7 +2,7 @@ dominio: devoluciones
 fuentes:
   lineas_devolucion:
     clave_negocio:
-    - id_linea_devolucion
+      - id_linea_devolucion
     contrato: contracts/silver/lineas_devolucion.yml
     modo_carga: merge
     origen_sql:

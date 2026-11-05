@@ -126,21 +126,39 @@ Esperado: **358 válidas y 39 rechazadas**, incluidas filas aceptadas con Q1. Se
 sin leer CSV ni avanzar marca. La tabla de cuarentena guarda evidencia histórica; su total acumulado no es el
 número de rechazos pendientes. Repite `dev-q2`: no duplica evidencia.
 
+La evidencia de cuarentena conserva el lote en que se **observó** cada fila (`dev-q1`), no el de la revalidación:
+filtrar por `batch_id = 'dev-q2'` devuelve cero filas. Agrupa por versión de contrato (endpoint de `lh_silver`):
+
+```sql
+SELECT batch_id, version_contrato, COUNT(*) AS rechazos
+FROM dbo.fwk_cuarentena
+GROUP BY batch_id, version_contrato;
+```
+
+Esperado tras Q2: `dev-q1` con 10 rechazos en la versión 1 y 39 en la versión 2.
+
 ```powershell
 & $Python -m scripts.laboratorio checkpoint --paso fallar --env-file .env.alumno
+& $Python scripts/validar_contratos.py
+& $Python scripts/generar_catalogo.py
 & $Python -m scripts.laboratorio config --env-file .env.alumno
 ```
 
-Q3 (`version: 3`, política `fallar`): revalidación `batch_id="dev-q3"` debe producir error de contrato.
-Silver sigue con 358 filas; cuarentena y marca no cambian por el intento fallido. Revisa auditoría y el lote pendiente.
+Q3 (`version: 3`, política `fallar`): revalidación `batch_id="dev-q3"` debe producir error de contrato. La salida
+del notebook muestra `lineas_devolucion: 39 filas incumplen el contrato; no se publica`.
+Silver sigue con 358 filas; cuarentena y marca no cambian por el intento fallido. En `fwk_ejecuciones` queda una
+ejecución `error` con ese mensaje, y en `fwk_lotes` el lote `dev-q3` queda en estado `revalidacion` (pendiente).
 
 ```powershell
 & $Python -m scripts.laboratorio checkpoint --paso recuperar --env-file .env.alumno
+& $Python scripts/validar_contratos.py
+& $Python scripts/generar_catalogo.py
 & $Python -m scripts.laboratorio config --env-file .env.alumno
 ```
 
 Q4 mantiene motivo obligatorio y recupera cuarentena con `version: 4`. Reejecuta **el mismo `dev-q3`** en revalidación:
 debe confirmar, con 358 válidas y 39 rechazos. El cambio de contrato es explícito; no se salta el lote fallido.
+`fwk_lotes` muestra `dev-q3` confirmado con versión de contrato 4, y la cuarentena suma 39 rechazos de la versión 4.
 
 ## 01:55–02:10 · Descanso
 
