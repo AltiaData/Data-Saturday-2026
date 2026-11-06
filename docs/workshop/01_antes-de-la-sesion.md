@@ -1,16 +1,13 @@
 # Preparación del alumno · Fabric propio obligatorio
 
-La única modalidad es ejecutar en tu propia suscripción/capacidad de Microsoft Fabric. Trae una cuenta de tu tenant,
-capacidad activa asignable a tus workspaces y permisos para crear y ejecutar lakehouses, notebooks y Environments.
-Una licencia Power BI Pro o PPU por sí sola no proporciona la capacidad de Fabric necesaria. Una capacidad Trial propia
-sirve si tu tenant permite activarla y sigue vigente durante el evento. Consulta las
+La modalidad es ejecutar en tu propia suscripción/capacidad de Microsoft Fabric. Trae una cuenta de tu tenant, capacidad activa asignable a tus workspaces y permisos para crear y ejecutar lakehouses, notebooks y Environments.
+Una licencia Power BI Pro o PPU por sí sola no proporciona la capacidad de Fabric necesaria. Una capacidad Trial propia sirve si tu tenant permite activarla y sigue vigente durante el evento. Consulta las
 [licencias y capacidades de Fabric](https://learn.microsoft.com/en-us/fabric/enterprise/licenses).
-Los alumnos no necesitan bases de Azure SQL, cuentas Cosmos ni credenciales de los instructores.
+Los alumnos no necesitan bases de Azure SQL, cuentas Cosmos ni credenciales.
 
 ## 1. Herramientas antes del evento
 
-Instala Git, PowerShell 7, Python 3.12, Azure CLI y un editor. Para pruebas locales Spark: Java 17 y dependencias dev;
-en Windows, las utilidades nativas de Hadoop, o usa el devcontainer Linux incluido. Esto debe resolverse antes del evento.
+Instala Git, PowerShell 7, Python 3.12, Azure CLI y un editor. Para pruebas locales Spark: Java 17 y dependencias dev; en Windows, las utilidades nativas de Hadoop, o usa el devcontainer Linux incluido. Esto debe resolverse antes del evento.
 La ejecución de las demos ocurre en Fabric; no depende de tener Spark local.
 
 Desde la raíz de tu copia de alumnos o de la plantilla:
@@ -72,5 +69,4 @@ No pegues tokens en el fichero de entorno.
 - `python -m scripts.modificar_csv verificar` termina correctamente.
 - La carpeta `data/original` contiene el volcado distribuido; aún no hay modificaciones ni cargas de las demos.
 
-La siguiente guía es [Seguir las demos](02_seguir-las-demos.md). El instructor no entrega credenciales ni workspaces
-compartidos como alternativa a esta preparación.
+La siguiente guía es [Seguir las demos](02_seguir-las-demos.md). 

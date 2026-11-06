@@ -1,17 +1,13 @@
 # Workshop de cuatro horas · Demos en tu propio Fabric
 
-Trabaja desde PowerShell en la raíz del proyecto generado, salvo el primer bloque. Conserva `$Python`, `$Plantilla`
-y el fichero `.env.alumno` de la [preparación](01_antes-de-la-sesion.md). Cada persona utiliza sus propios recursos.
+Trabaja desde PowerShell en la raíz del proyecto generado, salvo el primer bloque. Conserva `$Python`, `$Plantilla` y el fichero `.env.alumno` de la [preparación](01_antes-de-la-sesion.md). Cada persona utiliza sus propios recursos.
 
 ## 00:00–00:15 · Arquitectura y reglas
 
 Teoría: un workspace por responsabilidad; bronze conserva observaciones, silver aplica contrato y gold modela consumo.
-Separar extracción completa/incremental, escritura `merge` e historificación SCD2. Revisar `AGENTS.md`, convenciones,
-glosario, contratos, modelos y las funciones de `src/datafwk`. Los notebooks solo orquestan.
+Separar extracción completa/incremental, escritura `merge` e historificación SCD2. Revisar `AGENTS.md`, convenciones, glosario, contratos, modelos y las funciones de `src/datafwk`. Los notebooks solo orquestan.
 
-Datos: el volcado real del 2 de noviembre de 2026 contiene 49 tablas SQL (41.454 filas) y diez contenedores Cosmos
-(18.665 documentos). Los manifiestos permiten comprobarlos. Las demos procesan 100 clientes y 397 devoluciones;
-Cosmos queda disponible en su totalidad para reproducción y ampliaciones. Las exclusiones están en `data/README.md`.
+Datos: Las exclusiones están en `data/README.md`.
 
 ## 00:15–00:50 · Demo 1: generar un proyecto greenfield
 
@@ -35,9 +31,7 @@ git init -b main
 ```
 
 Sustituye `fsh-alumno01` por TU proyecto en ambos comandos y en `.env.alumno`. El destino debe ser nuevo.
-Resultado: contratos Q1 y tipo1, fuentes CSV en completa, `fecha_cambio` como marca CRM, nombres de tu workspace en
-configuración y `parameter.yml`, nuevos `logicalId` y dos CSV de trabajo. `escenario.json` indica cliente `C0001`
-(Sevilla) y cuatro devoluciones elegidas. No apliques `checkpoint base` sobre un laboratorio que ya evolucionó.
+Resultado: contratos Q1 y tipo1, fuentes CSV en completa, `fecha_cambio` como marca CRM, nombres de tu workspace en configuración y `parameter.yml`, nuevos `logicalId` y dos CSV de trabajo. `escenario.json` indica cliente `C0001` (Sevilla) y cuatro devoluciones elegidas. No apliques `checkpoint base` sobre un laboratorio que ya evolucionó.
 
 Publica los recursos sin eliminar items huérfanos:
 
@@ -52,15 +46,13 @@ Publica los recursos sin eliminar items huérfanos:
 
 Resultado: `lh_bronze`, `lh_silver`, `lh_gold` en datos; cinco notebooks en ingeniería; wheel 0.3.0 publicado en
 `env_fwk`; YAML en `lh_bronze/Files/_framework` y CSV en `Files/landing`.
-En Fabric, vincula **cada notebook** al Environment `env_fwk` publicado y guarda. Detén sesiones anteriores para que
-carguen el nuevo wheel. Comprueba `LAKEHOUSE_ESQUEMA` contra el tipo real de lakehouse.
+En Fabric, vincula **cada notebook** al Environment `env_fwk` publicado y guarda. Detén sesiones anteriores para que carguen el nuevo wheel. Comprueba `LAKEHOUSE_ESQUEMA` contra el tipo real de lakehouse.
 No publiques analítica ni ejecutes `desplegar.py` completo: estos ejercicios crean la dimensión del workshop,
 no las tablas de ventas de los ejemplos genéricos de la plantilla.
 
 ## Cómo ejecutar y comprobar un lote
 
-Abre el notebook en Fabric, cambia su celda de parámetros y usa **Run all**. En todos:
-`entorno="dev"`, `workspace_datos="<tu nombre exacto de workspace datos>"`.
+Abre el notebook en Fabric, cambia su celda de parámetros y usa **Run all**. En todos: `entorno="dev"`, `workspace_datos="<tu nombre exacto de workspace datos>"`.
 No cambies lógica ni imports. El Environment ya debe estar seleccionado.
 
 | Operación | Notebook | Parámetros adicionales |
@@ -138,8 +130,7 @@ debe confirmar, con 358 válidas y 39 rechazos. El cambio de contrato es explíc
 
 ## 02:10–02:40 · Demo 4: completa → incremental
 
-Teoría: marca confirmada, límite superior fijo, estabilización y solape de cinco segundos; extracción y escritura
-son decisiones independientes. En CSV se lee el fichero completo y se filtra: no es pushdown, CDC ni ahorro de I/O.
+Teoría: marca confirmada, límite superior fijo, estabilización y solape de cinco segundos; extracción y escritura son decisiones independientes. En CSV se lee el fichero completo y se filtra: no es pushdown, CDC ni ahorro de I/O.
 
 ```powershell
 & $Python -m scripts.laboratorio checkpoint --paso incremental --env-file .env.alumno
@@ -157,13 +148,11 @@ Repite el mismo lote: no duplica datos ni cambia la marca. Espera al menos 11 se
 `crm-inc-2` sin modificar CSV: se esperan cero filas extraídas y silver conserva 100; el límite puede avanzar.
 Si el reloj local está adelantado respecto a Fabric, corrígelo: una marca futura quedará fuera hasta que llegue su ventana.
 
-No se detectan borrados físicos ni ciudades intermedias que cambien dos veces entre lecturas. Devoluciones permanece
-en completa porque no dispone de una marca de modificación fiable.
+No se detectan borrados físicos ni ciudades intermedias que cambien dos veces entre lecturas. Devoluciones permanece en completa porque no dispone de una marca de modificación fiable.
 
 ## 02:40–03:20 · Demo 5: añadir SCD2 a ciudad, que antes era tipo1
 
-Teoría: historia por observación UTC, nueva clave por versión, intervalos `[desde,hasta)`, proyección vigente y cambio
-de grano para consumidores. No reconstruir Sevilla anterior a la activación como si se hubiera observado bajo SCD2.
+Teoría: historia por observación UTC, nueva clave por versión, intervalos `[desde,hasta)`, proyección vigente y cambio de grano para consumidores. No reconstruir Sevilla anterior a la activación como si se hubiera observado bajo SCD2.
 
 ```powershell
 & $Python -m scripts.laboratorio checkpoint --paso scd2 --env-file .env.alumno
@@ -217,14 +206,12 @@ cambiar su lista de atributos históricos requiere otra migración.
 
 ## 03:20–03:40 · Demo 6: consumo y documentos Cosmos
 
-Teoría: una dimensión vigente se relaciona por `id_cliente`; relacionar hechos directamente con el histórico por esa
-clave puede multiplicar filas. Una unión temporal necesita fecha del hecho y definición de negocio acordada.
+Teoría: una dimensión vigente se relaciona por `id_cliente`; relacionar hechos directamente con el histórico por esa clave puede multiplicar filas. Una unión temporal necesita fecha del hecho y definición de negocio acordada.
 
 1. En el endpoint gold consulta `SELECT COUNT(*) FROM dbo.dim_cliente_actual;`: esperado 100.
 2. Compara con las 102 versiones históricas y las tres filas de C0001. No crear KPIs no definidos.
 3. Abre `data/original/manifest.json`: revisa los diez contenedores Cosmos y sus claves de partición.
-4. Abre una parte CSV con un lector CSV o ejecuta el ejemplo de `data/README.md`: `documento_json` se deserializa
-   sin perder arrays, objetos ni IDs. Ejecuta `python -m scripts.modificar_csv verificar`: todas las partes deben pasar.
+4. Abre una parte CSV con un lector CSV o ejecuta el ejemplo de `data/README.md`: `documento_json` se deserializa    sin perder arrays, objetos ni IDs. Ejecuta `python -m scripts.modificar_csv verificar`: todas las partes deben pasar.
 5. Explica cómo una nueva fuente Cosmos necesitaría proyección y contrato antes de incorporarse al pipeline.
 
 ## 03:40–03:55 · Demo 7: revisión del cambio
@@ -241,8 +228,7 @@ git check-ignore .env.alumno data/laboratorio/clientes_crm.csv
 
 Esperado: dotenv y CSV mutables ignorados; contratos Q4/SCD2 y configuración incremental visibles para revisión.
 Para el greenfield aún sin commit, revisa también los ficheros no seguidos (un `git diff` vacío no implica ausencia de cambios).
-Si preparaste Spark local, ejecuta `python -m pytest --delta` y `pre-commit run --all-files`; ante una limitación de
-herramientas local, registra cuál y completa la validación en CI. No silencies reglas para conseguir verde.
+Si preparaste Spark local, ejecuta `python -m pytest --delta` y `pre-commit run --all-files`; ante una limitación de herramientas local, registra cuál y completa la validación en CI. No silencies reglas para conseguir verde.
 
 ## 03:55–04:00 · Restauración y cierre
 
@@ -253,6 +239,5 @@ Start-Sleep -Seconds 6
 ```
 
 Nuevo lote CRM `crm-restaurar`: C0001 vuelve a Sevilla y abre una cuarta versión; no se borra historia.
-Para devoluciones, ejecuta bronze → silver con `dev-restaurar` y después revalidación `dev-restaurar-q4` para reconstruir
-el estado bajo Q4: esperado 362 válidas y 35 rechazos naturales. Restaurar no significa limpiar los defectos originales.
+Para devoluciones, ejecuta bronze → silver con `dev-restaurar` y después revalidación `dev-restaurar-q4` para reconstruir el estado bajo Q4: esperado 362 válidas y 35 rechazos naturales. Restaurar no significa limpiar los defectos originales.
 La cuarentena conserva evidencia histórica. Para otro ensayo desde cero, utiliza una copia greenfield y workspaces vacíos.

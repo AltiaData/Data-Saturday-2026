@@ -11,8 +11,7 @@ Es la versión "proyecto real" del framework del workshop *75 años de proyectos
 
 La rama evolutiva incorpora generación greenfield, lectura SQL directa, ventanas incrementales confirmadas,
 cuarentena versionada, revalidación y activación SCD2 sobre una dimensión tipo1.
-El [recorrido de cuatro horas](docs/runbooks/workshop-evolutivo.md) explica los comandos, notebooks y checkpoints
-de [templates/workshop](templates/workshop/README.md). Para validar también almacenamiento y recuperación local:
+El [recorrido de cuatro horas](docs/runbooks/workshop-evolutivo.md) explica los comandos, notebooks y checkpoints de [templates/workshop](templates/workshop/README.md). Para validar también almacenamiento y recuperación local:
 `pytest --delta` (Java 17; en Windows requiere además las bibliotecas nativas de Hadoop).
 
 | # | Pieza | Dónde |

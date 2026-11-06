@@ -1,6 +1,6 @@
 # Data Saturday · Alumnos
 
-Modalidad única: cada alumno utiliza su propia suscripción/capacidad activa de Fabric.
+Modalidad: cada alumno utiliza su propia suscripción/capacidad activa de Fabric.
 
 1. [Preparación](docs/workshop/01_antes-de-la-sesion.md).
 2. [Demos paso a paso](docs/workshop/02_seguir-las-demos.md).

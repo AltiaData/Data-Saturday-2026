@@ -1,9 +1,8 @@
 # Plan del instructor · 240 minutos
 
-Modalidad única: cada alumno ejecuta con su propio Fabric. Preparación obligatoria:
+Modalidad: cada alumno ejecuta con su propio Fabric. Preparación obligatoria:
 [instructores](01_preparacion-instructores.md) y [alumnos](01_antes-de-la-sesion.md).
-La guía [Seguir las demos](02_seguir-las-demos.md) contiene los comandos, parámetros de notebook, consultas y resultados
-esperados para cada bloque; úsala como guion operativo y documento entregable al alumno.
+La guía [Seguir las demos](02_seguir-las-demos.md) contiene los comandos, parámetros de notebook, consultas y resultados esperados para cada bloque; úsala como guion operativo y documento entregable al alumno.
 
 | Minutos | Duración | Contenido y acción docente | Evidencia al terminar |
 |---|---:|---|---|
